@@ -104,15 +104,15 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 mt-0.5 text-green-400" />
-                <span>123 Green Street, Eco City, 12345</span>
+                <span>Cilacap, Dusun Jetis Nusawungu, Indonesia</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-green-400" />
-                <span>+1 (555) 123-4567</span>
+                <span>+62 812-2784-8422</span>
               </li>
               <li className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-green-400" />
-                <span>info@wasteless.com</span>
+                <span>intechofficialteam@gmail.com</span>
               </li>
             </ul>
           </motion.div>
