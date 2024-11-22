@@ -50,28 +50,29 @@ const Navbar = () => {
           </div>
 
           {/* Right side buttons with cart */}
-          <div className="hidden md:flex items-center space-x-6">
-            {/* Cart Button */}
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="relative"
-            >
-              <Link href="/cart" className="relative p-2 hover:text-green-200 transition-colors">
-                <ShoppingCart className="w-6 h-6" />
-                {cartItems > 0 && (
-                  <motion.span
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center"
-                  >
-                    {cartItems}
-                  </motion.span>
-                )}
-              </Link>
-            </motion.div>
-
-            {/* Auth Buttons */}
+                  <div className="hidden md:flex items-center space-x-6">
+          {/* Cart Button */}
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="relative"
+          >
+            <Link href="/cart" className="relative p-2 hover:text-green-200 transition-colors">
+              <ShoppingCart className="w-6 h-6" />
+              {cartItems > 0 && (
+                <motion.span
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center"
+                >
+                  {cartItems}
+                </motion.span>
+              )}
+            </Link>
+          </motion.div>
+        
+          {/* Auth Buttons */}
+          <Link href="/login">
             <motion.button 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -79,6 +80,8 @@ const Navbar = () => {
             >
               Login
             </motion.button>
+          </Link>
+          <Link href="/register">
             <motion.button 
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -86,7 +89,8 @@ const Navbar = () => {
             >
               Register
             </motion.button>
-          </div>
+          </Link>
+        </div>
 
           {/* Mobile Menu Button */}
           <div className="md:hidden flex items-center space-x-4">
@@ -145,10 +149,16 @@ const Navbar = () => {
               className="md:hidden mt-4"
             >
               <div className="flex flex-col space-y-4">
-                {['Home', 'Products', 'Expired Items', 'About', 'Contact'].map((item) => (
+                {['Home', 'Products', 'For UMKM', 'About', 'Contact'].map((item) => (
                   <Link 
                     key={item}
-                    href={`/${item.toLowerCase().replace(' ', '-')}`}
+                    href={item === 'Products' 
+                      ? '/marketplace'
+                      : item === 'For UMKM'
+                      ? '/business'
+                      : item === 'Home'
+                      ? '/'
+                      : `/${item.toLowerCase()}`}
                     className="hover:text-green-200 transition py-2"
                     onClick={() => setIsOpen(false)}
                   >
