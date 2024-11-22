@@ -16,10 +16,8 @@ import {
 const Footer = () => {
   const quickLinks = [
     { name: 'About Us', href: '/about' },
-    { name: 'How It Works', href: '/how-it-works' },
-    { name: 'For Businesses', href: '/business' },
-    { name: 'For Customers', href: '/customers' },
-    { name: 'Blog', href: '/blog' },
+    { name: 'Product', href: '/marketplace' },
+    { name: 'For UMKM', href: '/business' },
     { name: 'Contact', href: '/contact' },
   ];
 

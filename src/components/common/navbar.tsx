@@ -26,7 +26,7 @@ const Navbar = () => {
 
           {/* Desktop Menu remains same */}
           <div className="hidden md:flex space-x-6">
-            {['Home', 'Products', 'Expired Items', 'About', 'Contact'].map((item, i) => (
+            {['Home', 'Products', 'For UMKM', 'About', 'Contact'].map((item, i) => (
               <motion.div
                 key={item}
                 initial={{ opacity: 0, y: -20 }}
@@ -34,7 +34,13 @@ const Navbar = () => {
                 transition={{ delay: i * 0.1 }}
               >
                 <Link 
-                  href={`/${item.toLowerCase().replace(' ', '-')}`}
+                  href={item === 'Products' 
+                    ? '/marketplace'
+                    : item === 'For UMKM'
+                    ? '/business'
+                    : item === 'Home'
+                    ? '/'
+                    : `/${item.toLowerCase()}`}
                   className="hover:text-green-200 transition-all hover:scale-105 transform"
                 >
                   {item}
