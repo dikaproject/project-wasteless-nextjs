@@ -1,11 +1,12 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Pencil, Package, Calendar, Tag } from 'lucide-react';
+import { ArrowLeft, Pencil, Package, Calendar, Tag, ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { Product, Category } from '@/types/product';
+import Image from 'next/image';
 
 export default function ProductDetail() {
   const params = useParams();
@@ -13,6 +14,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Product | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showImageModal, setShowImageModal] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,12 +92,37 @@ export default function ProductDetail() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Image Section */}
+          <div className="space-y-4">
+            <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-gray-100">
+              {product.photo ? (
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  className="relative w-full h-full cursor-pointer"
+                  onClick={() => setShowImageModal(true)}
+                >
+                  <Image
+                    src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/products/${product.photo}`}
+                    alt={product.name}
+                    fill
+                    className="object-cover"
+                  />
+                </motion.div>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <ImageIcon className="w-20 h-20 text-gray-300" />
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Product Details */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">
               <Tag className="w-5 h-5 text-gray-400" />
               <div>
                 <p className="text-sm text-gray-500">Category</p>
-                <p className="font-medium text-gray-800">{category?.name || 'Unknown'}</p>
+                <p className="font-medium text-gray-800">{product.category_name || 'Unknown'}</p>
               </div>
             </div>
 
@@ -118,9 +145,7 @@ export default function ProductDetail() {
                 </p>
               </div>
             </div>
-          </div>
 
-          <div className="space-y-6">
             <div>
               <p className="text-sm text-gray-500">Status</p>
               <span
@@ -143,6 +168,27 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+      {/* Image Modal */}
+      {showImageModal && product.photo && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowImageModal(false)}
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="relative w-full max-w-3xl aspect-square"
+          >
+            <Image
+              src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/products/${product.photo}`}
+              alt={product.name}
+              fill
+              className="object-contain"
+            />
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }

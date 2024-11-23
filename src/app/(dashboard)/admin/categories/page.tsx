@@ -43,6 +43,9 @@ export default function ModernCategoriesPage() {
             try {
                 const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/categories/${id}`, {
                     method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
                 });
                 if (response.ok) {
                     toast.success('Category deleted successfully');

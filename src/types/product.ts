@@ -7,6 +7,7 @@ export interface Product {
   massa: string;
   expired: string;
   is_active: boolean;
+  photo?: string;
   category_name?: string;
   created_at: string;
 }

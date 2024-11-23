@@ -6,30 +6,66 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
+interface RegisterFormData {
+  name: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  phone: string;
+  role: 'user' | 'seller';
+}
+
 const RegisterForm = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterFormData>({
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
     phone: '',
-    role: 'user' as 'user' | 'seller'
+    role: 'user'
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
+  const validateForm = () => {
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error('Please enter a valid email address');
+      return false;
+    }
 
-    // Validate phone number
+    // Phone validation
     const phoneRegex = /^[0-9]{10,13}$/;
     if (!phoneRegex.test(formData.phone)) {
       toast.error('Please enter a valid phone number');
-      setIsLoading(false);
+      return false;
+    }
+
+    // Password validation
+    if (formData.password.length < 6) {
+      toast.error('Password must be at least 6 characters');
+      return false;
+    }
+
+    // Password confirmation
+    if (formData.password !== formData.confirmPassword) {
+      toast.error('Passwords do not match');
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
       return;
     }
+
+    setIsLoading(true);
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
@@ -52,14 +88,21 @@ const RegisterForm = () => {
         toast.success('Registration successful!');
         router.push('/login');
       } else {
-        toast.error(data.message || 'Registration failed');
+        // Handle Prisma-specific errors
+        if (data.message.includes('Unique constraint failed')) {
+          toast.error('Email already exists');
+        } else {
+          toast.error(data.message || 'Registration failed');
+        }
       }
     } catch (error) {
+      console.error('Registration error:', error);
       toast.error('An error occurred during registration');
     } finally {
       setIsLoading(false);
     }
   };
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData(prev => ({
