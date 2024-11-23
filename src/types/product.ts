@@ -10,6 +10,13 @@ export interface Product {
   photo?: string;
   category_name?: string;
   created_at: string;
+  price?: number;
+  price_id: number;
+  is_discount: boolean;
+  discount_percentage: number;
+  discount_price: number;
+  start_date: string | null;
+  end_date: string | null;
 }
 
 export interface Category {

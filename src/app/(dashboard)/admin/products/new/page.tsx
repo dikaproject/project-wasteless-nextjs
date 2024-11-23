@@ -2,7 +2,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Upload, X } from "lucide-react";
 import Image from "next/image";
 import toast from "react-hot-toast";
@@ -16,11 +16,19 @@ export default function NewProduct() {
   const [formData, setFormData] = useState({
     category_id: "",
     name: "",
+    slug: "",
     quantity: "",
     massa: "",
     expired: "",
     is_active: true,
     photo: null as File | null,
+    price: "",
+    seller_id: "",
+    discount: "",
+    discount_price: "", // Add this
+    start_date: "",
+    end_date: "",
+    is_discount: false,
   });
 
   useEffect(() => {
@@ -80,12 +88,40 @@ export default function NewProduct() {
     }
   };
 
+  // Add calculateDiscountPrice function
+  const calculateDiscountPrice = (price: string, discount: string) => {
+    const numPrice = Number(price.replace(/\D/g, ""));
+    const numDiscount = Number(discount);
+    if (!numPrice || !numDiscount) return "";
+    const discountAmount = (numPrice * numDiscount) / 100;
+    return String(numPrice - discountAmount);
+  };
+
+  //  add slug product otomatis duplicate name
+  const slug = (name: string) => {
+    return name.toLowerCase().replace(/\s/g, '-');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      const priceData = {
+        price: formData.price,
+        is_discount: formData.is_discount,
+        discount_percentage: formData.discount || 0,
+        discount_price: formData.discount_price || 0,
+        start_date: formData.start_date || null,
+        end_date: formData.end_date || null,
+      };
+
       const formDataToSend = new FormData();
+      const user = localStorage.getItem('user');
+      if (user) {
+        const seller = JSON.parse(user);
+        formDataToSend.append('seller_id', seller.id);
+      }
       formDataToSend.append("category_id", formData.category_id);
       formDataToSend.append("name", formData.name);
       formDataToSend.append("quantity", formData.quantity);
@@ -95,6 +131,7 @@ export default function NewProduct() {
       if (formData.photo) {
         formDataToSend.append("photo", formData.photo);
       }
+      formDataToSend.append("prices", JSON.stringify([priceData]));
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/products`,
@@ -121,15 +158,41 @@ export default function NewProduct() {
     }
   };
 
+  const formatCurrency = (value: string) => {
+    const number = value.replace(/\D/g, "");
+    return new Intl.NumberFormat("id-ID").format(Number(number));
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]:
-        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
-    }));
+
+    if (name === "price") {
+      const formattedValue = formatCurrency(value);
+      const rawPrice = formattedValue.replace(/\./g, "");
+      setFormData((prev) => ({
+        ...prev,
+        price: rawPrice,
+        discount_price: prev.discount
+          ? calculateDiscountPrice(rawPrice, prev.discount)
+          : "",
+      }));
+    } else if (name === "discount") {
+      setFormData((prev) => ({
+        ...prev,
+        discount: value,
+        discount_price: prev.price
+          ? calculateDiscountPrice(prev.price, value)
+          : "",
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]:
+          type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      }));
+    }
   };
 
   return (
@@ -191,6 +254,24 @@ export default function NewProduct() {
 
           <div>
             <label
+              htmlFor="slug"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Slug
+            </label>
+            <input
+              type="text"
+              id="slug"
+              name="slug"
+              value={slug(formData.name)}
+              onChange={handleChange}
+              className="mt-1 block w-full text-gray-600 rounded-md border border-gray-300 px-3 py-2"
+              required
+            />
+          </div>
+
+          <div>
+            <label
               htmlFor="quantity"
               className="block text-sm font-medium text-gray-700"
             >
@@ -224,6 +305,141 @@ export default function NewProduct() {
               required
             />
           </div>
+
+          <div>
+            <label
+              htmlFor="price"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Price
+            </label>
+            <div className="mt-1 relative rounded-md shadow-sm">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span className="text-gray-500 sm:text-sm">Rp</span>
+              </div>
+              <input
+                type="text"
+                name="price"
+                id="price"
+                value={formatCurrency(formData.price)}
+                onChange={handleChange}
+                className="mt-1 block w-full text-gray-600 rounded-md border border-gray-300 pl-12 py-2"
+                placeholder="0"
+                required
+              />
+            </div>
+          </div>
+
+          {/* Discount field */}
+          <AnimatePresence>
+            {formData.is_discount && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+                className="space-y-4 overflow-hidden"
+              >
+                {/* Discount field */}
+                <motion.div
+                  initial={{ y: 20 }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <label
+                    htmlFor="discount"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Discount (%)
+                  </label>
+                  <input
+                    type="number"
+                    id="discount"
+                    name="discount"
+                    min="0"
+                    max="100"
+                    value={formData.discount}
+                    onChange={handleChange}
+                    className="mt-1 block w-full text-gray-600 rounded-md border border-gray-300 px-3 py-2"
+                    placeholder="0"
+                  />
+                </motion.div>
+
+                {/* price after discount */}
+                <motion.div
+                  initial={{ y: 20 }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                >
+                  <label
+                    htmlFor="discount_price"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Price After Discount
+                  </label>
+                  <div className="mt-1 relative rounded-md shadow-sm">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <span className="text-gray-500 sm:text-sm">Rp</span>
+                    </div>
+                    <input
+                      type="text"
+                      name="discount_price"
+                      id="discount_price"
+                      value={formatCurrency(formData.discount_price)}
+                      onChange={handleChange}
+                      className="mt-1 block w-full text-gray-600 rounded-md border border-gray-300 pl-12 py-2"
+                      placeholder="0"
+                      readOnly
+                    />
+                  </div>
+                </motion.div>
+
+                {/* Start Date field */}
+                <motion.div
+                  initial={{ y: 20 }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.1 }}
+                >
+                  <label
+                    htmlFor="start_date"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Discount Start Date
+                  </label>
+                  <input
+                    type="date"
+                    id="start_date"
+                    name="start_date"
+                    value={formData.start_date}
+                    onChange={handleChange}
+                    className="mt-1 block w-full text-gray-600 rounded-md border border-gray-300 px-3 py-2"
+                  />
+                </motion.div>
+
+                {/* End Date field */}
+                <motion.div
+                  initial={{ y: 20 }}
+                  animate={{ y: 0 }}
+                  transition={{ duration: 0.3, delay: 0.2 }}
+                >
+                  <label
+                    htmlFor="end_date"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Discount End Date
+                  </label>
+                  <input
+                    type="date"
+                    id="end_date"
+                    name="end_date"
+                    value={formData.end_date}
+                    onChange={handleChange}
+                    className="mt-1 block w-full text-gray-600 rounded-md border border-gray-300 px-3 py-2"
+                  />
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Image Upload */}
           <div
@@ -331,6 +547,23 @@ export default function NewProduct() {
               className="ml-2 block text-sm text-gray-700"
             >
               Active
+            </label>
+          </div>
+
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="is_discount"
+              name="is_discount"
+              checked={formData.is_discount}
+              onChange={handleChange}
+              className="h-4 w-4 rounded text-gray-600 border-gray-300 text-green-600 focus:ring-green-500"
+            />
+            <label
+              htmlFor="is_discount"
+              className="ml-2 block text-sm text-gray-700"
+            >
+              Add Discount
             </label>
           </div>
 

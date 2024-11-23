@@ -1,12 +1,22 @@
-'use client';
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Pencil, Package, Calendar, Tag, ImageIcon } from 'lucide-react';
-import Link from 'next/link';
-import toast from 'react-hot-toast';
-import { Product, Category } from '@/types/product';
-import Image from 'next/image';
+"use client";
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft,
+  Pencil,
+  Package,
+  Calendar,
+  Tag,
+  ImageIcon,
+  User,
+  DollarSign,
+} from "lucide-react";
+import Link from "next/link";
+import toast from "react-hot-toast";
+import { Product, Category } from "@/types/product";
+import Image from "next/image";
+import { formatCurrency } from "@/lib/utils";
 
 export default function ProductDetail() {
   const params = useParams();
@@ -19,19 +29,22 @@ export default function ProductDetail() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem("token");
         if (!token) {
-          throw new Error('No authentication token found');
+          throw new Error("No authentication token found");
         }
 
         // Fetch both product and categories
         const [productResponse, categoriesResponse] = await Promise.all([
-          fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/products/${params.id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/admin/products/${params.id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
           fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/categories`, {
             headers: { Authorization: `Bearer ${token}` },
-          })
+          }),
         ]);
 
         const productData = await productResponse.json();
@@ -41,12 +54,12 @@ export default function ProductDetail() {
           setProduct(productData.data);
           setCategories(categoriesData.data);
         } else {
-          throw new Error('Failed to fetch data');
+          throw new Error("Failed to fetch data");
         }
       } catch (error) {
-        console.error('Fetch error:', error);
-        toast.error('Failed to fetch data');
-        router.push('/admin/products');
+        console.error("Fetch error:", error);
+        toast.error("Failed to fetch data");
+        router.push("/admin/products");
       } finally {
         setLoading(false);
       }
@@ -55,11 +68,11 @@ export default function ProductDetail() {
     fetchData();
   }, [params.id, router]);
 
-  if (loading) return <div className='text-gray-600'>Loading...</div>;
-  if (!product) return <div className='text-gray-600'>Product not found</div>;
+  if (loading) return <div className="text-gray-600">Loading...</div>;
+  if (!product) return <div className="text-gray-600">Product not found</div>;
 
   // Find category name
-  const category = categories.find(c => c.id === product.category_id);
+  const category = categories.find((c) => c.id === product.category_id);
 
   return (
     <div className="p-6">
@@ -77,7 +90,9 @@ export default function ProductDetail() {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-2xl font-bold text-gray-800">{product.name}</h1>
-            <p className="text-sm text-gray-500 mt-1">Product ID: #{product.id}</p>
+            <p className="text-sm text-gray-500 mt-1">
+              Product ID: #{product.id}
+            </p>
           </div>
           <Link href={`/admin/products/${params.id}/edit`}>
             <motion.button
@@ -122,7 +137,9 @@ export default function ProductDetail() {
               <Tag className="w-5 h-5 text-gray-400" />
               <div>
                 <p className="text-sm text-gray-500">Category</p>
-                <p className="font-medium text-gray-800">{product.category_name || 'Unknown'}</p>
+                <p className="font-medium text-gray-800">
+                  {product.category_name || "Unknown"}
+                </p>
               </div>
             </div>
 
@@ -146,17 +163,85 @@ export default function ProductDetail() {
               </div>
             </div>
 
-            <div>
-              <p className="text-sm text-gray-500">Status</p>
+            {/* Price Information */}
+            {product.price && (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <DollarSign className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <p className="text-sm text-gray-500">Price</p>
+                    <p className="font-medium text-gray-800">
+                      Rp {formatCurrency(product.price)}
+                    </p>
+                  </div>
+                </div>
+
+                {product.is_discount && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="space-y-4"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Tag className="w-5 h-5 text-gray-400" />
+                      <div>
+                        <p className="text-sm text-gray-500">Discount</p>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium text-red-600">
+                            {product.discount_percentage}% OFF
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            Rp {formatCurrency(product.price)} →{" "}
+                            <span className="font-medium text-green-600">
+                              Rp {formatCurrency(product.discount_price)}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {(product.start_date || product.end_date) && (
+                      <div className="flex items-center gap-3">
+                        <Calendar className="w-5 h-5 text-gray-400" />
+                        <div>
+                          <p className="text-sm text-gray-500">
+                            Discount Period
+                          </p>
+                          <p className="font-medium text-gray-800">
+                            {product.start_date
+                              ? new Date(
+                                  product.start_date
+                                ).toLocaleDateString()
+                              : "Start"}{" "}
+                            -{" "}
+                            {product.end_date
+                              ? new Date(product.end_date).toLocaleDateString()
+                              : "End"}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </div>
+            )}
+
+            {/* Status Badges */}
+            <div className="mt-6 flex gap-2">
               <span
-                className={`mt-1 px-3 py-1 inline-flex text-sm font-medium rounded-full ${
+                className={`px-3 py-1 text-sm font-medium rounded-full ${
                   product.is_active
-                    ? 'bg-green-100 text-green-800'
-                    : 'bg-red-100 text-red-800'
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
                 }`}
               >
-                {product.is_active ? 'Active' : 'Inactive'}
+                {product.is_active ? "Active" : "Inactive"}
               </span>
+              {product.is_discount && (
+                <span className="px-3 py-1 text-sm font-medium rounded-full bg-yellow-100 text-yellow-800">
+                  On Discount
+                </span>
+              )}
             </div>
 
             <div>
