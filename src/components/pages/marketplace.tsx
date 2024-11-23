@@ -42,7 +42,7 @@ const MarketplacePage = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-20 bg-gray-50">
+    <div className="relative min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 overflow-hidden pt-20 md:pt-28">
       {/* Header Section with gradient */}
       <section className="bg-gradient-to-b from-green-50 to-white border-b">
         <div className="container mx-auto px-4 py-8">

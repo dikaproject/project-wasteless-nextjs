@@ -4,7 +4,7 @@ import { Phone, Mail, MapPin, Send } from 'lucide-react';
 
 const ContactPage = () => {
   return (
-    <div className="min-h-screen pt-20">
+    <div className="relative min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 overflow-hidden pt-20 md:pt-28">
       <section className="py-20 bg-gradient-to-b from-green-50 to-white">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">

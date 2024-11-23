@@ -19,7 +19,7 @@ const AboutPage = () => {
   ];
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="relative min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 overflow-hidden pt-20 md:pt-28">
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-green-50 to-white py-20">
         <div className="container mx-auto px-4">

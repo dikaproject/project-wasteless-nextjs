@@ -12,7 +12,7 @@ export default function Home() {
     <main>
       <Navbar />
       <HeroSection />
-      <AboutSection />
+        <AboutSection />
       <HowToOrder />
       <ProductSection />
       <TestimonialSection />
