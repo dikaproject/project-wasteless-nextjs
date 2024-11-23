@@ -30,7 +30,7 @@ export function middleware(request: NextRequest) {
   console.log('Token exists:', !!token);
   console.log('User data exists:', !!userDataCookie);
 
-  const publicPaths = ['/login', '/register', '/access-denied', '/'];
+  const publicPaths = ['/login', '/register', '/access-denied', '/', '/about', '/bussiness', '/contact', '/marketplace'];
   if (publicPaths.includes(path)) {
     return NextResponse.next();
   }
