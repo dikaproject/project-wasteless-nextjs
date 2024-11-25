@@ -1,14 +1,38 @@
 "use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingCart } from "lucide-react"; // Add this import
+import { ShoppingCart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Navbar = () => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
-  const [cartItems] = useState(0); // Replace with your cart state management
+  const [cartItems] = useState(0);
   const { user, isAuthenticated, logout } = useAuth();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    // Check if auth is ready
+    const token = localStorage.getItem("token");
+    if (token) {
+      setAuthChecked(true);
+    } else {
+      setAuthChecked(true);
+    }
+  }, [isAuthenticated]);
+
+  // Modified logout handler
+  const handleLogout = async () => {
+    await logout();
+    router.refresh(); // Force router refresh
+  };
+
+  // Early return while checking auth
+  if (!authChecked) {
+    return null; // Or a loading spinner
+  }
 
   return (
     <nav className="bg-green-600/95 backdrop-blur-sm text-white py-4 fixed w-full top-0 z-50">
@@ -82,45 +106,65 @@ const Navbar = () => {
 
             {/* Auth Buttons */}
             <motion.div className="flex items-center gap-4">
-              {isAuthenticated ? (
-                <>
-                  {/* Dashboard Button for Admin/Seller */}
-                  {(user?.role === "admin" || user?.role === "seller") && (
-                    <Link href={user.role === "admin" ? "/admin" : "/seller"}>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition"
-                      >
-                        Dashboard
-                      </motion.button>
-                    </Link>
-                  )}
-
+        <AnimatePresence mode="wait">
+          {isAuthenticated ? (
+            <motion.div
+              key="authenticated"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="flex items-center gap-4"
+            >
+              {(user?.role === "admin" || user?.role === "seller") && (
+                <Link href={user.role === "admin" ? "/admin" : "/seller"}>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={logout}
-                    className="bg-white text-green-600 px-4 py-2 rounded-lg hover:bg-green-100 transition"
+                    className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition"
                   >
-                    Logout
+                    Dashboard
                   </motion.button>
-                </>
-              ) : (
-                <>
-                  <Link href="/login">
-                    <motion.button className="bg-white text-green-600 px-4 py-2 rounded-lg hover:bg-green-100 transition">
-                      Login
-                    </motion.button>
-                  </Link>
-                  <Link href="/register">
-                    <motion.button className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition">
-                      Register
-                    </motion.button>
-                  </Link>
-                </>
+                </Link>
               )}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleLogout}
+                className="bg-white text-green-600 px-4 py-2 rounded-lg hover:bg-green-100 transition"
+              >
+                Logout
+              </motion.button>
             </motion.div>
+          ) : (
+            <motion.div
+              key="unauthenticated"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              className="flex items-center gap-4"
+            >
+              <Link href="/login">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-white text-green-600 px-4 py-2 rounded-lg hover:bg-green-100 transition"
+                >
+                  Login
+                </motion.button>
+              </Link>
+              <Link href="/register">
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="bg-green-700 text-white px-4 py-2 rounded-lg hover:bg-green-800 transition"
+                >
+                  Register
+                </motion.button>
+              </Link>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
           </div>
 
           {/* Mobile Menu Button */}
