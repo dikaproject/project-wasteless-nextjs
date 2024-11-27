@@ -38,14 +38,17 @@ const LoginForm = () => {
 
       if (data.success && data.user) {
         // Store in localStorage
+        const token = `Bearer ${data.token}`;
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
         // Store in cookies
         document.cookie = `token=${data.token}; path=/`;
         document.cookie = `userData=${JSON.stringify(data.user)}; path=/`;
-      
+
         toast.success('Login successful!');
+
+        
       
         // Check if address is completed
         if (!data.user.has_address && data.user.role !== 'admin') {
