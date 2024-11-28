@@ -88,7 +88,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (userData && typeof userData === 'object') {
           setUser(userData);
           setIsAuthenticated(true);
-          setHasAddress(!!userData.has_address);
+          // Only set hasAddress for regular users
+          setHasAddress(userData.role === 'user' ? !!userData.has_address : true);
         }
       }
     } catch (error) {

@@ -1,3 +1,4 @@
+import { pattern } from 'framer-motion/client';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -17,7 +18,16 @@ const protectedRoutes = [
   },
   {
     prefix: '/seller',
-    role: 'seller'
+    role: 'seller',
+    patterns: [
+      '/seller',
+      '/seller/products',
+      '/seller/products/[0-9]+',
+      '/seller/products/[0-9]+/edit',
+      '/seller/orders',
+      '/seller/orders/[0-9]+',
+      '/seller/orders/[0-9]+/edit'
+    ]
   }
 ];
 
@@ -69,7 +79,8 @@ export function middleware(request: NextRequest) {
     }
 
     // Check address completion for non-admin users
-    if (!userData.has_address && userData.role !== 'admin' && path !== '/address-completed') {
+    if (!userData.has_address && userData.role === 'user' && path !== '/address-completed') {
+      console.log('User needs to complete address');
       return NextResponse.redirect(new URL('/address-completed', request.url));
     }
 

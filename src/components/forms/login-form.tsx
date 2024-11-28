@@ -37,26 +37,24 @@ const LoginForm = () => {
       }
 
       if (data.success && data.user) {
-        // Store in localStorage
-        const token = `Bearer ${data.token}`;
+        // Store token and user data
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        // Store in cookies
-        document.cookie = `token=${data.token}; path=/`;
-        document.cookie = `userData=${JSON.stringify(data.user)}; path=/`;
-
-        toast.success('Login successful!');
-
-        
+        // Set cookies with proper expiration
+        const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+        document.cookie = `token=${data.token}; path=/; expires=${expires.toUTCString()}`;
+        document.cookie = `userData=${JSON.stringify(data.user)}; path=/; expires=${expires.toUTCString()}`;
       
-        // Check if address is completed
-        if (!data.user.has_address && data.user.role !== 'admin') {
+        toast.success('Login successful!');
+      
+        // Check if address is needed
+        if (!data.user.has_address && data.user.role === 'user') { // Only redirect users, not sellers
           await router.push('/address-completed');
           return;
         }
       
-        // Handle navigation based on role
+        // Handle role-based navigation
         switch (data.user.role) {
           case 'admin':
             router.push('/admin');
