@@ -27,6 +27,17 @@ export default function SellerDashboard() {
           'Authorization': `Bearer ${token}`
         }
       });
+
+      if (response.status === 403) {
+        const result = await response.json();
+        if (result.message === 'Account not activated yet') {
+          toast.error('Maaf Akun Anda Belum Dapat Untuk Menjadi Seller, Tunggu Admin Mengkonfirmasi Akun Anda');
+          // Optionally redirect the user
+          // router.push('/'); // Uncomment if you want to redirect
+          setLoading(false);
+          return;
+        }
+      }
       
       const result = await response.json();
       
