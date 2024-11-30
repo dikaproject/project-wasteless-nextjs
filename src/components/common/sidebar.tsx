@@ -17,7 +17,8 @@ import {
   X,
   Home,
   ClipboardList,  // Add this for Order Management
-  Store
+  Store,
+  UserPlus
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -52,6 +53,11 @@ const Sidebar = () => {
       title: "Seller Management",
       icon: <Store className="w-5 h-5" />,
       path: "/admin/sellers",
+    },
+    {
+      title: 'Seller Applications',
+      icon: <UserPlus className="w-5 h-5" />,
+      path: '/admin/seller-applications',
     },
     {
       title: "Products",

@@ -78,11 +78,6 @@ export function middleware(request: NextRequest) {
       }
     }
 
-    // Check address completion for non-admin users
-    if (!userData.has_address && userData.role === 'user' && path !== '/address-completed') {
-      console.log('User needs to complete address');
-      return NextResponse.redirect(new URL('/address-completed', request.url));
-    }
 
     return NextResponse.next();
   } catch (error) {
