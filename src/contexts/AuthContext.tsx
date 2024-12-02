@@ -81,6 +81,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const pendingRedirect = localStorage.getItem('pendingRedirect');
+    const token = localStorage.getItem('token');
+    
+    if (pendingRedirect && token && !isTokenExpired(token)) {
+      localStorage.removeItem('pendingRedirect');
+      window.location.href = pendingRedirect;
+    }
+  }, []);
+
+  useEffect(() => {
     try {
       const storedUser = localStorage.getItem('user');
       if (storedUser) {

@@ -52,7 +52,7 @@ const Navbar = () => {
 
           {/* Desktop Menu remains same */}
           <div className="hidden md:flex space-x-6">
-            {["Home", "Products", "For UMKM", "About", "Contact"].map(
+            {["Home", "Products", "For UMKM", "About", "Contact", "History Transaction"].map(
               (item, i) => (
                 <motion.div
                   key={item}
@@ -68,6 +68,8 @@ const Navbar = () => {
                         ? "/business"
                         : item === "Home"
                         ? "/"
+                        : item === "History Transaction"
+                        ? "/history"
                         : `/${item.toLowerCase()}`
                     }
                     className="hover:text-green-200 transition-all hover:scale-105 transform"
@@ -229,7 +231,7 @@ const Navbar = () => {
             >
               <div className="flex flex-col space-y-4">
                 {/* Navigation Links */}
-                {["Home", "Products", "For UMKM", "About", "Contact"].map((item) => (
+                {["Home", "Products", "For UMKM", "About", "Contact", "History Transaction"].map((item) => (
                   <Link
                     key={item}
                     href={
@@ -239,6 +241,8 @@ const Navbar = () => {
                         ? "/business"
                         : item === "Home"
                         ? "/"
+                        : item === "History Transaction"
+                        ? "/history"
                         : `/${item.toLowerCase()}`
                     }
                     className="text-white hover:text-green-200 transition py-2"

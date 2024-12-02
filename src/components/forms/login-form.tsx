@@ -20,7 +20,7 @@ const LoginForm = () => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
-
+  
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: 'POST',
@@ -29,42 +29,46 @@ const LoginForm = () => {
         },
         body: JSON.stringify(formData),
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
       }
-
+  
       if (data.success && data.user) {
         // Store token and user data
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        // Set cookies with proper expiration
-        const expires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+        const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
         document.cookie = `token=${data.token}; path=/; expires=${expires.toUTCString()}`;
         document.cookie = `userData=${JSON.stringify(data.user)}; path=/; expires=${expires.toUTCString()}`;
-      
+        
         toast.success('Login successful!');
-      
-        // Check if address is needed
-        if (!data.user.has_address && data.user.role === 'user') { // Only redirect users, not sellers
-          await router.push('/address-completed');
-          return;
+  
+        // Set redirect URL based on role/conditions
+        let redirectUrl = '/';
+        
+        if (!data.user.has_address && data.user.role === 'user') {
+          redirectUrl = '/address-completed';
+        } else {
+          switch (data.user.role) {
+            case 'admin':
+              redirectUrl = '/admin';
+              break;
+            case 'seller':
+              redirectUrl = '/seller';
+              break;
+            default:
+              redirectUrl = '/';
+          }
         }
-      
-        // Handle role-based navigation
-        switch (data.user.role) {
-          case 'admin':
-            router.push('/admin');
-            break;
-          case 'seller':
-            router.push('/seller');
-            break;
-          default:
-            router.push('/');
-        }
+  
+        // Store intended redirect and reload
+        localStorage.setItem('pendingRedirect', redirectUrl);
+        window.location.reload();
+  
       } else {
         throw new Error('Invalid user data received');
       }

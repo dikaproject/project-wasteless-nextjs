@@ -9,6 +9,7 @@ import {
   Clock,
   Check,
   ShoppingBag,
+  MapPin,
 } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
@@ -27,6 +28,41 @@ interface Product {
   discount_percentage: number;
   discount_price: number;
   quantity: number;
+  kecamatan: string;
+  province: string;
+  kabupaten: string;
+}
+
+interface FilterOptions {
+  category: string;
+  kecamatan: string;
+  minPrice: number;
+  maxPrice: number;
+  showExpired: boolean;
+  onlyDiscounted: boolean;
+}
+
+interface District {
+  id: string;
+  regency_id: string;
+  name: string;
+}
+
+interface Province {
+  id: string;
+  name: string;
+}
+
+interface Regency {
+  id: string;
+  province_id: string;
+  name: string;
+}
+
+interface Category {
+  id: number;
+  name: string;
+  slug: string;
 }
 
 const MarketplacePage = () => {
@@ -39,15 +75,47 @@ const MarketplacePage = () => {
   const [selectedSort, setSelectedSort] = useState("Latest");
   const [searchQuery, setSearchQuery] = useState("");
   const { isAuthenticated } = useAuth();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [priceRange, setPriceRange] = useState({
+    min: 0,
+    max: 10000000, // 10 million IDR
+  });
+  const [showExpired, setShowExpired] = useState(false);
+  const [onlyDiscounted, setOnlyDiscounted] = useState(false);
+  const [districts, setDistricts] = useState<District[]>([]);
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [provinces, setProvinces] = useState<Province[]>([]);
+  const [regencies, setRegencies] = useState<Regency[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedProvince, setSelectedProvince] = useState("");
+  const [selectedRegency, setSelectedRegency] = useState("");
+  const [selectedProvinceId, setSelectedProvinceId] = useState("");
+  const [selectedRegencyId, setSelectedRegencyId] = useState("");
+  const [selectedDistrictId, setSelectedDistrictId] = useState("");
 
-  const categories = [
-    "All",
-    "Vegetables",
-    "Fruits",
-    "Bakery",
-    "Dairy",
-    "Ready Meals",
-  ];
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/customer/categories`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const data = await response.json();
+        if (data.success) {
+          setCategories(data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
   const sortOptions = ["Latest", "Price: Low to High", "Price: High to Low"];
 
   useEffect(() => {
@@ -57,71 +125,193 @@ const MarketplacePage = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
+      const params = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: "12",
+        category: selectedCategory !== "All" ? selectedCategory : "",
+        province: selectedProvince || "",
+        kabupaten: selectedRegency || "",
+        kecamatan: selectedDistrict || "",
+        minPrice: priceRange.min.toString(),
+        maxPrice: priceRange.max.toString(),
+        showExpired: showExpired.toString(),
+        onlyDiscounted: onlyDiscounted.toString(),
+        sort:
+          selectedSort === "Price: Low to High"
+            ? "price_asc"
+            : selectedSort === "Price: High to Low"
+            ? "price_desc"
+            : "latest",
+      });
+
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/products/all`
+        `${process.env.NEXT_PUBLIC_API_URL}/products/all?${params}`
       );
       const data = await response.json();
+
       if (data.success) {
-        setProducts(data.data);
+        setProducts(data.data.products);
+        setTotalPages(data.data.pagination.totalPages);
       } else {
         throw new Error(data.message);
       }
     } catch (err) {
       setError("Failed to load products");
       toast.error("Failed to load products");
-      console.error(err);
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      try {
+        const response = await fetch("/api/proxy-location?type=provinces");
+        const data = await response.json();
+        setProvinces(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to fetch provinces:", error);
+        setProvinces([]);
+      }
+    };
+
+    fetchProvinces();
+  }, []);
+
+  // Update the fetchRegencies useEffect
+  useEffect(() => {
+    const fetchRegencies = async () => {
+      if (!selectedProvinceId) return; // Use selectedProvinceId instead of selectedProvince
+
+      try {
+        const response = await fetch(
+          `/api/proxy-location?type=regencies&id=${selectedProvinceId}` // Use selectedProvinceId
+        );
+        const data = await response.json();
+        setRegencies(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to fetch regencies:", error);
+        setRegencies([]);
+      }
+    };
+
+    fetchRegencies();
+  }, [selectedProvinceId]); // Change dependency to selectedProvinceId
+
+  // Similarly update the fetchDistricts useEffect
+  useEffect(() => {
+    const fetchDistricts = async () => {
+      if (!selectedRegencyId) return; // Use selectedRegencyId
+
+      try {
+        const response = await fetch(
+          `/api/proxy-location?type=districts&id=${selectedRegencyId}` // Use selectedRegencyId
+        );
+        const data = await response.json();
+        setDistricts(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Failed to fetch districts:", error);
+        setDistricts([]);
+      }
+    };
+
+    fetchDistricts();
+  }, [selectedRegencyId]); // Change dependency to selectedRegencyId
+
+  useEffect(() => {
+    fetchProducts();
+  }, [
+    currentPage,
+    selectedCategory,
+    selectedProvince,
+    selectedRegency,
+    selectedDistrict,
+    priceRange,
+    showExpired,
+    onlyDiscounted,
+    selectedSort,
+  ]);
+
   const addToCart = async (productId: number) => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem("token");
       if (!isAuthenticated || !token) {
-        toast.error('Please login first');
+        toast.error("Please login first");
         return;
       }
-  
-      console.log('Token:', token); // Debug token
-  
+
+      console.log("Token:", token); // Debug token
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cart`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           product_id: productId,
-          quantity: 1
-        })
+          quantity: 1,
+        }),
       });
-  
+
       const data = await response.json();
-      console.log('Response:', data); // Debug response
-  
+      console.log("Response:", data); // Debug response
+
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to add to cart');
+        throw new Error(data.message || "Failed to add to cart");
       }
-  
+
       if (data.success) {
-        toast.success('Product added to cart');
+        toast.success("Product added to cart");
       }
     } catch (err) {
-      console.error('Add to cart error:', err);
-      toast.error(err instanceof Error ? err.message : 'Failed to add product to cart');
+      console.error("Add to cart error:", err);
+      toast.error(
+        err instanceof Error ? err.message : "Failed to add product to cart"
+      );
     }
   };
 
   // Filter and sort products
   const filteredProducts = products
     .filter((product) => {
-      if (selectedCategory === "All") return true;
-      return product.category_name === selectedCategory;
-    })
-    .filter((product) => {
-      if (!searchQuery) return true;
-      return product.name.toLowerCase().includes(searchQuery.toLowerCase());
+      // Category filter
+      if (
+        selectedCategory !== "All" &&
+        product.category_name !== selectedCategory
+      ) {
+        return false;
+      }
+
+      // Location filters - Case insensitive comparison
+      if (
+        selectedProvince &&
+        product.province?.toLowerCase() !== selectedProvince.toLowerCase()
+      ) {
+        return false;
+      }
+      if (
+        selectedRegency &&
+        product.kabupaten?.toLowerCase() !== selectedRegency.toLowerCase()
+      ) {
+        return false;
+      }
+      if (
+        selectedDistrict &&
+        product.kecamatan?.toLowerCase() !== selectedDistrict.toLowerCase()
+      ) {
+        return false;
+      }
+
+      // Search query
+      if (
+        searchQuery &&
+        !product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      ) {
+        return false;
+      }
+
+      return true;
     })
     .sort((a, b) => {
       switch (selectedSort) {
@@ -133,6 +323,15 @@ const MarketplacePage = () => {
           return new Date(b.expired).getTime() - new Date(a.expired).getTime();
       }
     });
+
+  const formatPrice = (value: number) => {
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
 
   if (loading)
     return (
@@ -160,7 +359,7 @@ const MarketplacePage = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products..."
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
+                className="w-full pl-10 text-gray-700 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             </div>
@@ -180,20 +379,88 @@ const MarketplacePage = () => {
               {/* Categories with icons */}
               <div>
                 <h3 className="font-semibold mb-4 text-gray-800">Categories</h3>
-                <div className="space-y-2">
-                  {categories.map((category) => (
-                    <button
-                      key={category}
-                      onClick={() => setSelectedCategory(category)}
-                      className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 ${
-                        selectedCategory === category
-                          ? "bg-green-50 text-green-600 font-medium shadow-sm"
-                          : "text-gray-600 hover:bg-gray-50"
-                      }`}
-                    >
-                      {category}
-                    </button>
-                  ))}
+                <div className="text-gray-600">
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  >
+                    <option value="All">All Categories</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.name}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-4 text-gray-800">Location</h3>
+                <div className="space-y-3 text-gray-700">
+                  <select
+                    value={selectedProvinceId}
+                    onChange={(e) => {
+                      const id = e.target.value;
+                      const province = provinces.find((p) => p.id === id);
+                      setSelectedProvinceId(id);
+                      setSelectedProvince(province ? province.name : "");
+                      // Reset child selects
+                      setSelectedRegencyId("");
+                      setSelectedRegency("");
+                      setSelectedDistrictId("");
+                      setSelectedDistrict("");
+                    }}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  >
+                    <option value="">Select Province</option>
+                    {provinces.map((province) => (
+                      <option key={province.id} value={province.id}>
+                        {province.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={selectedRegencyId}
+                    onChange={(e) => {
+                      const id = e.target.value;
+                      const regency = regencies.find((r) => r.id === id);
+                      setSelectedRegencyId(id);
+                      setSelectedRegency(regency ? regency.name : "");
+                      // Reset district
+                      setSelectedDistrictId("");
+                      setSelectedDistrict("");
+                    }}
+                    disabled={!selectedProvinceId}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100"
+                  >
+                    <option value="">Select Regency</option>
+                    {regencies.map((regency) => (
+                      <option key={regency.id} value={regency.id}>
+                        {regency.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  <select
+                    value={selectedDistrictId}
+                    onChange={(e) => {
+                      const id = e.target.value;
+                      const district = districts.find((d) => d.id === id);
+                      setSelectedDistrictId(id);
+                      setSelectedDistrict(district ? district.name : "");
+                    }}
+                    disabled={!selectedRegencyId}
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:bg-gray-100"
+                  >
+                    <option value="">Select District</option>
+                    {districts.map((district) => (
+                      <option key={district.id} value={district.id}>
+                        {district.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
@@ -202,41 +469,49 @@ const MarketplacePage = () => {
                 <h3 className="font-semibold mb-4 text-gray-800">
                   Price Range
                 </h3>
-                <input
-                  type="range"
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-green-600"
-                  min="0"
-                  max="100"
-                />
-                <div className="flex justify-between text-sm text-gray-600 mt-2">
-                  <span>$0</span>
-                  <span>$100</span>
+                <div className="space-y-4 text-gray-600">
+                  <input
+                    type="range"
+                    className="w-full"
+                    min="0"
+                    max="10000000"
+                    step="100000"
+                    value={priceRange.max}
+                    onChange={(e) =>
+                      setPriceRange((prev) => ({
+                        ...prev,
+                        max: parseInt(e.target.value),
+                      }))
+                    }
+                  />
+                  <div className="flex justify-between text-sm">
+                    <span>{formatPrice(0)}</span>
+                    <span>{formatPrice(priceRange.max)}</span>
+                  </div>
                 </div>
               </div>
 
               {/* Modern Checkboxes */}
               <div>
-                <h3 className="font-semibold mb-4 text-gray-800">Filters</h3>
-                <div className="space-y-3">
-                  <label className="flex items-center gap-3 text-gray-700 hover:text-gray-900 cursor-pointer group">
-                    <div className="relative w-5 h-5">
-                      <input type="checkbox" className="peer hidden" />
-                      <div className="w-5 h-5 border-2 border-gray-300 rounded transition-colors peer-checked:border-green-500 peer-checked:bg-green-500" />
-                      <Check className="w-3 h-3 text-white absolute top-1 left-1 opacity-0 peer-checked:opacity-100 transition-opacity" />
-                    </div>
-                    <span className="group-hover:text-gray-900">
-                      Show expired items
-                    </span>
+                <h3 className="font-semibold mb-4 text-gray-700">Filters</h3>
+                <div className="space-y-3 text-gray-600">
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={showExpired}
+                      onChange={(e) => setShowExpired(e.target.checked)}
+                      className="form-checkbox text-green-600"
+                    />
+                    <span>Show expired items</span>
                   </label>
-                  <label className="flex items-center gap-3 text-gray-700 hover:text-gray-900 cursor-pointer group">
-                    <div className="relative w-5 h-5">
-                      <input type="checkbox" className="peer hidden" />
-                      <div className="w-5 h-5 border-2 border-gray-300 rounded transition-colors peer-checked:border-green-500 peer-checked:bg-green-500" />
-                      <Check className="w-3 h-3 text-white absolute top-1 left-1 opacity-0 peer-checked:opacity-100 transition-opacity" />
-                    </div>
-                    <span className="group-hover:text-gray-900">
-                      Only discounted
-                    </span>
+                  <label className="flex items-center gap-3">
+                    <input
+                      type="checkbox"
+                      checked={onlyDiscounted}
+                      onChange={(e) => setOnlyDiscounted(e.target.checked)}
+                      className="form-checkbox text-green-600"
+                    />
+                    <span>Only discounted</span>
                   </label>
                 </div>
               </div>
@@ -318,7 +593,7 @@ const MarketplacePage = () => {
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>
-                    {product.is_discount && (
+                    {product.is_discount && product.discount_percentage > 0 && (
                       <span className="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-lg text-sm font-medium">
                         -{product.discount_percentage}%
                       </span>
@@ -341,13 +616,38 @@ const MarketplacePage = () => {
 
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-2xl font-bold text-green-600">
-                        Rp {product.discount_price || product.price}
+                        {new Intl.NumberFormat("id-ID", {
+                          style: "currency",
+                          currency: "IDR",
+                          minimumFractionDigits: 0,
+                          maximumFractionDigits: 0,
+                        }).format(product.discount_price || product.price)}
                       </span>
-                      {product.is_discount && (
-                        <span className="text-sm text-gray-400 line-through">
-                          Rp{product.price}
-                        </span>
-                      )}
+                      {product.is_discount &&
+                        product.discount_percentage > 0 && (
+                          <span className="text-sm text-gray-400 line-through">
+                            {new Intl.NumberFormat("id-ID", {
+                              style: "currency",
+                              currency: "IDR",
+                              minimumFractionDigits: 0,
+                              maximumFractionDigits: 0,
+                            }).format(product.price)}
+                          </span>
+                        )}
+                    </div>
+
+                    <div className="flex flex-col gap-1 mb-4">
+                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <MapPin className="w-4 h-4 flex-shrink-0" />
+                        <div className="flex flex-col">
+                          <span className="font-medium text-gray-700">
+                            {product.kecamatan}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {product.kabupaten}, {product.province}
+                          </span>
+                        </div>
+                      </div>
                     </div>
 
                     <button
@@ -368,19 +668,22 @@ const MarketplacePage = () => {
             </div>
 
             {/* Enhanced Pagination */}
-            <div className="mt-12 flex justify-center gap-2">
-              {[1, 2, 3, 4, 5].map((page) => (
-                <button
-                  key={page}
-                  className={`w-10 h-10 rounded-lg transition-all duration-200 ${
-                    page === 1
-                      ? "bg-green-600 text-white shadow-md"
-                      : "bg-white text-gray-600 hover:bg-green-50 hover:text-green-600"
-                  }`}
-                >
-                  {page}
-                </button>
-              ))}
+            <div className="mt-8 flex justify-center gap-2">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`px-4 py-2 rounded ${
+                      currentPage === page
+                        ? "bg-green-600 text-white"
+                        : "bg-white text-gray-600 hover:bg-green-50"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
             </div>
           </div>
         </div>

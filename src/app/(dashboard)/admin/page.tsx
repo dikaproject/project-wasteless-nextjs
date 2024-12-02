@@ -191,10 +191,10 @@ export default function AdminDashboard() {
             <tbody>
               {data.recentOrders.map((order) => (
                 <tr key={order.id} className="border-b last:border-0">
-                  <td className="py-4">#{order.id}</td>
-                  <td className="py-4">{order.user_name}</td>
-                  <td className="py-4">Rp {order.total_amount.toLocaleString()}</td>
-                  <td className="py-4">
+                  <td className="py-4 text-gray-600">#{order.id}</td>
+                  <td className="py-4 text-gray-600">{order.user_name}</td>
+                  <td className="py-4 text-gray-600">Rp {order.total_amount.toLocaleString()}</td>
+                  <td className="py-4 text-gray-600">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
                         order.status === 'completed'
@@ -224,16 +224,16 @@ export default function AdminDashboard() {
           <table className="w-full">
             <thead>
               <tr className="text-left border-b">
-                <th className="pb-3">Name</th>
-                <th className="pb-3">Email</th>
-                <th className="pb-3">Joined</th>
+                <th className="pb-3 text-gray-600">Name</th>
+                <th className="pb-3 text-gray-600">Email</th>
+                <th className="pb-3 text-gray-600">Joined</th>
               </tr>
             </thead>
             <tbody>
               {data.recentUsers.map((user) => (
                 <tr key={user.id} className="border-b last:border-0">
-                  <td className="py-4">{user.name}</td>
-                  <td className="py-4">{user.email}</td>
+                  <td className="py-4 text-gray-600">{user.name}</td>
+                  <td className="py-4 text-gray-600">{user.email}</td>
                   <td className="py-4 text-gray-500">
                     {formatDistance(new Date(user.created_at), new Date(), { addSuffix: true })}
                   </td>

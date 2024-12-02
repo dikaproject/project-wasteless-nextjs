@@ -178,13 +178,13 @@ if (loading) {
               type="date"
               value={dateRange.start_date}
               onChange={(e) => setDateRange(prev => ({ ...prev, start_date: e.target.value }))}
-              className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="border text-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
             <input
               type="date"
               value={dateRange.end_date}
               onChange={(e) => setDateRange(prev => ({ ...prev, end_date: e.target.value }))}
-              className="border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              className="border text-gray-600 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-green-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -215,7 +215,7 @@ if (loading) {
         ].map((stat, index) => (
           <div key={index} className="bg-white rounded-xl shadow-sm p-6">
             <h3 className="text-sm font-medium text-gray-600">{stat.title}</h3>
-            <p className="text-2xl font-bold mt-2">{stat.value}</p>
+            <p className="text-2xl text-gray-600 font-bold mt-2">{stat.value}</p>
             <span className={`inline-flex items-center text-sm mt-2 ${
               stat.trendUp ? 'text-green-600' : 'text-red-600'
             }`}>
@@ -258,10 +258,10 @@ if (loading) {
             <tbody className="divide-y divide-gray-100">
               {data?.topProducts.map((product) => (
                 <tr key={product.name} className="hover:bg-gray-50 transition-colors">
-                  <td className="py-4">{product.name}</td>
-                  <td className="py-4">{product.units_sold.toLocaleString()}</td>
-                  <td className="py-4">{formatCurrency(product.revenue)}</td>
-                  <td className="py-4">
+                  <td className="py-4 text-gray-600">{product.name}</td>
+                  <td className="py-4 text-gray-600">{product.units_sold.toLocaleString()}</td>
+                  <td className="py-4 text-gray-600">{formatCurrency(product.revenue)}</td>
+                  <td className="py-4 text-gray-600">
                     {((product.units_sold / product.total_sold) * 100).toFixed(1)}%
                   </td>
                 </tr>

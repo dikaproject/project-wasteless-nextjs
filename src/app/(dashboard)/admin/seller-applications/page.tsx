@@ -190,7 +190,7 @@ export default function SellerApplications() {
                 value={rejectReason}
                 onChange={(e) => setRejectReason(e.target.value)}
                 placeholder="Enter reason for rejection..."
-                className="w-full p-2 border rounded-lg mb-4"
+                className="w-full text-gray-600 p-2 border rounded-lg mb-4"
                 rows={3}
               />
               <div className="flex justify-end space-x-2">

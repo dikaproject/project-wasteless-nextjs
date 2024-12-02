@@ -143,7 +143,7 @@ export default function SellerManagement() {
           placeholder="Search by product or seller name..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10 pr-4 py-2 w-full border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          className="pl-10 pr-4 text-gray-600 py-2 w-full border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
         />
       </div>
 
@@ -183,9 +183,9 @@ export default function SellerManagement() {
                       <div className="text-sm text-gray-500">{product.seller_email}</div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">{product.category_name}</td>
-                  <td className="px-6 py-4">{formatCurrency(product.price)}</td>
-                  <td className="px-6 py-4">{product.quantity}</td>
+                  <td className="px-6 py-4 text-gray-600">{product.category_name}</td>
+                  <td className="px-6 py-4 text-gray-600">{formatCurrency(product.price)}</td>
+                  <td className="px-6 py-4 text-gray-600">{product.quantity}</td>
                   <td className="px-6 py-4 text-sm text-gray-500">
                     {format(new Date(product.created_at), 'dd MMM yyyy')}
                   </td>
@@ -227,7 +227,7 @@ export default function SellerManagement() {
           <div className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-start">
-                <h2 className="text-xl font-bold">Product Details</h2>
+                <h2 className="text-xl font-bold text-gray-600">Product Details</h2>
                 <button
                   onClick={() => {
                     setSelectedProduct(null);
@@ -249,7 +249,7 @@ export default function SellerManagement() {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 text-gray-600">
                   <div>
                     <h3 className="font-medium text-gray-600">Product Name</h3>
                     <p>{selectedProduct.name}</p>
@@ -282,7 +282,7 @@ export default function SellerManagement() {
                     value={rejectionReason}
                     onChange={(e) => setRejectionReason(e.target.value)}
                     placeholder="Enter reason for rejection..."
-                    className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                    className="w-full p-2 border text-gray-600 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
                     rows={3}
                   />
                 </div>

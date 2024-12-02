@@ -133,13 +133,13 @@ export default function OrdersManagement() {
             placeholder="Search by order ID or customer name..."
             value={filter.search}
             onChange={(e) => setFilter(prev => ({ ...prev, search: e.target.value }))}
-            className="pl-10 pr-4 py-2 w-full border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+            className="pl-10 text-gray-600 pr-4 py-2 w-full border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
           />
         </div>
         <select
           value={filter.status}
           onChange={(e) => setFilter(prev => ({ ...prev, status: e.target.value }))}
-          className="border rounded-lg px-4 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          className="border rounded-lg text-gray-600 px-4 py-2 focus:ring-2 focus:ring-green-500 focus:border-transparent"
         >
           <option value="all">All Status</option>
           <option value="pending">Pending</option>
@@ -168,7 +168,7 @@ export default function OrdersManagement() {
             <tbody className="divide-y divide-gray-200">
               {filteredOrders.map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4">#{order.id}</td>
+                  <td className="px-6 py-4 text-gray-600">#{order.id}</td>
                   <td className="px-6 py-4">
                     <div>
                       <div className="font-medium text-gray-900">{order.user_name}</div>
@@ -231,7 +231,7 @@ export default function OrdersManagement() {
             <div className="p-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <h2 className="text-xl font-bold">Order #{selectedOrder.id}</h2>
+                  <h2 className="text-xl font-bold text-gray-600">Order #{selectedOrder.id}</h2>
                   <p className="text-sm text-gray-500">
                     {format(new Date(selectedOrder.created_at), 'dd MMM yyyy HH:mm')}
                   </p>
@@ -246,7 +246,7 @@ export default function OrdersManagement() {
 
               <div className="mt-6 space-y-6">
                 <div>
-                  <h3 className="font-medium">Customer Details</h3>
+                  <h3 className="font-medium text-gray-600">Customer Details</h3>
                   <div className="mt-2 text-sm text-gray-600">
                     <p>{selectedOrder.user_name}</p>
                     <p>{selectedOrder.user_email}</p>
@@ -254,7 +254,7 @@ export default function OrdersManagement() {
                 </div>
 
                 <div>
-                  <h3 className="font-medium">Shipping Address</h3>
+                  <h3 className="font-medium text-gray-600">Shipping Address</h3>
                   <div className="mt-2 text-sm text-gray-600">
                     <p>{selectedOrder.address}</p>
                     <p>{selectedOrder.kecamatan}, {selectedOrder.kabupaten}</p>
@@ -263,7 +263,7 @@ export default function OrdersManagement() {
                 </div>
 
                 <div>
-                  <h3 className="font-medium">Order Items</h3>
+                  <h3 className="font-medium text-gray-600">Order Items</h3>
                   <div className="mt-2 space-y-4">
                     {selectedOrder.items?.map((item) => (
                       <div key={item.id} className="flex gap-4">
@@ -273,7 +273,7 @@ export default function OrdersManagement() {
                           className="w-16 h-16 object-cover rounded"
                         />
                         <div>
-                          <p className="font-medium">{item.product_name}</p>
+                          <p className="font-medium text-gray-600">{item.product_name}</p>
                           <p className="text-sm text-gray-600">
                             {item.quantity} x {formatCurrency(item.price)}
                           </p>
@@ -284,15 +284,15 @@ export default function OrdersManagement() {
                 </div>
 
                 <div className="border-t pt-4">
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-sm text-gray-600">
                     <span>Subtotal</span>
                     <span>{formatCurrency(selectedOrder.total_amount - 15000)}</span>
                   </div>
-                  <div className="flex justify-between text-sm mt-2">
-                    <span>Shipping</span>
+                  <div className="flex justify-between text-sm mt-2 text-gray-600">
+                    <span>Ppn(0.7%)</span>
                     <span>{formatCurrency(15000)}</span>
                   </div>
-                  <div className="flex justify-between font-medium text-lg mt-4">
+                  <div className="flex justify-between font-medium text-lg mt-4 text-gray-600">
                     <span>Total</span>
                     <span>{formatCurrency(selectedOrder.total_amount)}</span>
                   </div>
