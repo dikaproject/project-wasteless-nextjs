@@ -221,7 +221,7 @@ export default function CartPage() {
                   )}
 
                   <div className="flex justify-between text-base text-gray-600">
-                    <span>Shipping</span>
+                    <span>PPN (0,7%)</span>
                     <span>Free</span>
                   </div>
 

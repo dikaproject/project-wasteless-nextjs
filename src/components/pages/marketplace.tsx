@@ -10,27 +10,39 @@ import {
   Check,
   ShoppingBag,
   MapPin,
+  X,
 } from "lucide-react";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import toast from "react-hot-toast";
+import { format } from "date-fns";
 
 interface Product {
   id: number;
+  seller_id: number;
+  category_id: number;
   name: string;
   slug: string;
-  price: number;
-  photo: string;
-  category_name: string;
-  is_active: boolean;
-  expired: string;
-  is_discount: boolean;
-  discount_percentage: number;
-  discount_price: number;
+  photo_id: number;
   quantity: number;
-  kecamatan: string;
+  massa: number;
+  expired: string;
+  is_active: number;
+  created_at: string;
+  updated_at: string;
+  category_name: string;
+  photo: string;
+  price: number;
+  is_discount: boolean | null;
+  discount_percentage: number | null;
+  discount_price: number | null;
+  start_date: string | null;
+  end_date: string | null;
   province: string;
   kabupaten: string;
+  kecamatan: string;
+  seller_name: string;
+  address: string | null;
 }
 
 interface FilterOptions {
@@ -67,6 +79,7 @@ interface Category {
 
 const MarketplacePage = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -270,6 +283,138 @@ const MarketplacePage = () => {
         err instanceof Error ? err.message : "Failed to add product to cart"
       );
     }
+  };
+
+  const ProductModal = ({
+    product,
+    onClose,
+  }: {
+    product: Product;
+    onClose: () => void;
+  }) => {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.95 }}
+          className="bg-white rounded-2xl shadow-xl max-w-lg w-full overflow-hidden"
+        >
+          <div className="relative aspect-video">
+            <Image
+              src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/products/${product.photo}`}
+              alt={product.name}
+              fill
+              className="object-cover"
+            />
+            <button
+              onClick={onClose}
+              className="absolute top-4 right-4 rounded-full p-2 shadow-lg"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="p-6 space-y-4">
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-800">
+                  {product.name}
+                </h2>
+                <p className="text-sm text-gray-500">{product.category_name}</p>
+              </div>
+              <div className="text-right">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="text-2xl font-bold text-green-600">
+                    {formatPrice(product.discount_price || product.price)}
+                  </span>
+                  {product.is_discount &&
+                    product.discount_percentage &&
+                    product.discount_percentage > 0 && (
+                      <span className="text-sm text-gray-400 line-through">
+                        {formatPrice(product.price)}
+                      </span>
+                    )}
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="text-gray-500">Seller</span>
+                <p className="font-medium text-gray-900">
+                  {product.seller_name}
+                </p>
+              </div>
+              <div>
+                <span className="text-gray-500">Location</span>
+                <p className="font-medium text-gray-900">
+                  {product.kecamatan}, {product.kabupaten}
+                </p>
+              </div>
+              <div>
+                <span className="text-gray-500">Stock</span>
+                <p className="font-medium text-gray-900">
+                  {product.quantity} items
+                </p>
+              </div>
+              <div>
+                <span className="text-gray-500">Weight</span>
+                <p className="font-medium text-gray-900">
+                  {product.massa} grams
+                </p>
+              </div>
+              <div>
+                <span className="text-gray-500">Expires on</span>
+                <p className="font-medium text-gray-900">
+                  {format(new Date(product.expired), "dd MMM yyyy")}
+                </p>
+              </div>
+              {product.is_discount &&
+                product.discount_percentage &&
+                product.discount_percentage > 0 && (
+                  <div>
+                    <span className="text-gray-500">Discount</span>
+                    <p className="font-medium text-red-500">
+                      {product.discount_percentage}% OFF
+                    </p>
+                  </div>
+                )}
+                <div className="col-span-2"> {/* Make address take full width */}
+    <span className="text-gray-500">Pickup Location</span>
+    <div className="mt-1">
+      <p className="font-medium text-gray-900">
+        {product.seller_name}
+      </p>
+      <p className="text-gray-600">
+        {product.address} {/* Add detailed address */}
+      </p>
+      <p className="text-gray-500 text-sm">
+        {product.kecamatan}, {product.kabupaten}, {product.province}
+      </p>
+    </div>
+  </div>
+            </div>
+
+            <button
+              onClick={() => {
+                addToCart(product.id);
+                onClose();
+              }}
+              disabled={product.quantity === 0}
+              className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 mt-6 ${
+                product.quantity === 0
+                  ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  : "bg-green-600 text-white hover:bg-green-700"
+              } transition-colors`}
+            >
+              <ShoppingBag className="w-5 h-5" />
+              {product.quantity === 0 ? "Out of Stock" : "Add to Cart"}
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
   };
 
   // Filter and sort products
@@ -580,8 +725,9 @@ const MarketplacePage = () => {
                   key={product.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
+                  onClick={() => setSelectedProduct(product)}
                   whileHover={{ y: -5 }}
-                  className="bg-white rounded-2xl shadow-lg overflow-hidden group"
+                  className="cursor-pointer bg-white rounded-2xl shadow-lg overflow-hidden group"
                 >
                   <div className="relative">
                     <div className="relative aspect-[4/3] bg-gray-200">
@@ -593,11 +739,13 @@ const MarketplacePage = () => {
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>
-                    {product.is_discount && product.discount_percentage > 0 && (
-                      <span className="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-lg text-sm font-medium">
-                        -{product.discount_percentage}%
-                      </span>
-                    )}
+                    {product.is_discount &&
+                      product.discount_percentage &&
+                      product.discount_percentage > 0 && (
+                        <span className="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-lg text-sm font-medium">
+                          -{product.discount_percentage}%
+                        </span>
+                      )}
                     {new Date(product.expired) < new Date() && (
                       <div className="absolute top-4 left-4 bg-yellow-500 text-white px-3 py-1 rounded-lg text-sm font-medium flex items-center gap-1">
                         <Clock className="w-4 h-4" />
@@ -624,7 +772,7 @@ const MarketplacePage = () => {
                         }).format(product.discount_price || product.price)}
                       </span>
                       {product.is_discount &&
-                        product.discount_percentage > 0 && (
+                        product.discount_percentage && product.discount_percentage > 0 && (
                           <span className="text-sm text-gray-400 line-through">
                             {new Intl.NumberFormat("id-ID", {
                               style: "currency",
@@ -666,6 +814,13 @@ const MarketplacePage = () => {
                 </motion.div>
               ))}
             </div>
+
+            {selectedProduct && (
+              <ProductModal
+                product={selectedProduct}
+                onClose={() => setSelectedProduct(null)}
+              />
+            )}
 
             {/* Enhanced Pagination */}
             <div className="mt-8 flex justify-center gap-2">

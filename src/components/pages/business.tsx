@@ -1,54 +1,69 @@
-'use client';
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-import { ArrowRight, CheckCircle2, Store, TrendingUp, Truck, AlertCircle } from 'lucide-react';
+"use client";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import {
+  ArrowRight,
+  CheckCircle2,
+  Store,
+  TrendingUp,
+  Truck,
+  AlertCircle,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const BusinessPage = () => {
+  const router = useRouter();
   const benefits = [
     {
       icon: <Store className="w-6 h-6" />,
       title: "Reach More Customers",
-      description: "Connect with conscious consumers looking for quality food at better prices"
+      description:
+        "Connect with conscious consumers looking for quality food at better prices",
     },
     {
       icon: <TrendingUp className="w-6 h-6" />,
       title: "Reduce Waste",
-      description: "Turn potential losses into revenue by selling items approaching expiry"
+      description:
+        "Turn potential losses into revenue by selling items approaching expiry",
     },
     {
       icon: <Truck className="w-6 h-6" />,
       title: "Efficient Management",
-      description: "Easy-to-use platform for managing inventory and orders"
-    }
+      description: "Easy-to-use platform for managing inventory and orders",
+    },
   ];
 
   const steps = [
     {
       number: "01",
       title: "Register Your Business",
-      description: "Complete our simple online registration form and verify your business"
+      description:
+        "Complete our simple online registration form and verify your business",
     },
     {
       number: "02",
       title: "List Your Products",
-      description: "Add your products with photos, prices, and expiry dates"
+      description: "Add your products with photos, prices, and expiry dates",
     },
     {
       number: "03",
       title: "Start Selling",
-      description: "Receive orders and manage your inventory through our platform"
-    }
+      description:
+        "Receive orders and manage your inventory through our platform",
+    },
   ];
 
   const faqs = [
     {
       question: "How much does it cost to join?",
-      answer: "Registration is free. We only take a small commission on successful sales."
+      answer:
+        "Registration is free. We only take a small commission on successful sales.",
     },
     {
       question: "What types of products can I sell?",
-      answer: "Any food items including fresh produce, baked goods, prepared meals, and more."
-    }
+      answer:
+        "Any food items including fresh produce, baked goods, prepared meals, and more.",
+    },
   ];
 
   return (
@@ -57,7 +72,7 @@ const BusinessPage = () => {
       <section className="bg-gradient-to-b from-green-50 to-white py-20">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-12">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="md:w-1/2 space-y-6"
@@ -66,14 +81,15 @@ const BusinessPage = () => {
                 For Business Partners
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
-                Grow Your Business, <br/>
+                Grow Your Business, <br />
                 <span className="text-green-600">Reduce Food Waste</span>
               </h1>
               <p className="text-lg text-gray-600">
-                Join WasteLess and turn your excess inventory into profit while making 
-                a positive impact on the environment
+                Join WasteLess and turn your excess inventory into profit while
+                making a positive impact on the environment
               </p>
               <motion.button
+                onClick={() => router.push("/register")}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 className="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition shadow-lg flex items-center gap-2"
@@ -123,7 +139,9 @@ const BusinessPage = () => {
                 <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600 mb-6">
                   {benefit.icon}
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4">{benefit.title}</h3>
+                <h3 className="text-xl font-bold text-gray-800 mb-4">
+                  {benefit.title}
+                </h3>
                 <p className="text-gray-600">{benefit.description}</p>
               </motion.div>
             ))}
@@ -218,9 +236,11 @@ const BusinessPage = () => {
               Ready to Get Started?
             </h2>
             <p className="text-green-100 mb-8">
-              Join our growing community of business partners and start making a difference
+              Join our growing community of business partners and start making a
+              difference
             </p>
             <motion.button
+              onClick={() => router.push("/register")}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="bg-white text-green-600 px-8 py-4 rounded-xl hover:bg-green-50 transition shadow-lg inline-flex items-center gap-2"

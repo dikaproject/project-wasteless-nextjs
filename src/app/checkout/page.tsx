@@ -1,10 +1,10 @@
 // app/checkout/page.tsx
-'use client';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { RadioGroup } from '@headlessui/react';
-import { Loader2, CreditCard, Truck, Check } from 'lucide-react';
-import toast from 'react-hot-toast';
+"use client";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { RadioGroup } from "@headlessui/react";
+import { Loader2, CreditCard, Truck, Check } from "lucide-react";
+import toast from "react-hot-toast";
 
 interface Address {
   id: number;
@@ -12,6 +12,12 @@ interface Address {
   kecamatan: string;
   address: string;
   code_pos: string;
+}
+
+declare global {
+  interface Window {
+    snap: any;
+  }
 }
 
 interface CartItem {
@@ -22,6 +28,12 @@ interface CartItem {
   photo: string;
   is_discount?: boolean;
   discount_price?: number;
+  seller_name: string;
+  seller_phone: string;
+  seller_address: string;
+  seller_kecamatan: string;
+  seller_kabupaten: string;
+  seller_province: string;
 }
 
 export default function CheckoutPage() {
@@ -30,58 +42,34 @@ export default function CheckoutPage() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<'midtrans' | 'cod'>('midtrans');
+  const [paymentMethod, setPaymentMethod] = useState<"midtrans" | "cod">(
+    "midtrans"
+  );
 
   useEffect(() => {
-    fetchAddress();
     fetchCart();
   }, []);
 
-  const fetchAddress = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/address`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      const data = await response.json();
-  
-      if (response.status === 404) {
-        // Address not found - show add address option
-        setAddress(null);
-        return;
-      }
-  
-      if (!response.ok) {
-        throw new Error(data.message);
-      }
-  
-      if (data.success) {
-        setAddress(data.data);
-      }
-    } catch (err) {
-      toast.error('Failed to load address');
-      console.error('Address fetch error:', err);
-    }
-  };
-
   const fetchCart = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cart`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/cart/details`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
       const data = await response.json();
 
       if (data.success) {
+        console.log("Cart data:", data.data); // Debug
         setCartItems(data.data);
       }
     } catch (err) {
-      toast.error('Failed to load cart');
+      console.error("Cart fetch error:", err);
+      toast.error("Failed to load cart");
     } finally {
       setLoading(false);
     }
@@ -89,61 +77,79 @@ export default function CheckoutPage() {
 
   const calculateTotals = () => {
     const subtotal = cartItems.reduce((sum, item) => {
-      const price = item.is_discount ? (item.discount_price || item.price) : item.price;
-      return sum + (price * item.quantity);
+      const price = item.is_discount
+        ? item.discount_price || item.price
+        : item.price;
+      return sum + price * item.quantity;
     }, 0);
-    const deliveryCost = 15000;
-    const total = subtotal + deliveryCost;
 
-    return { subtotal, deliveryCost, total };
+    // Calculate PPN (0.7%)
+    const ppn = Math.round(subtotal * 0.007);
+    const total = subtotal + ppn;
+
+    return { subtotal, ppn, total };
   };
 
   const handleCheckout = async () => {
     try {
       setProcessing(true);
       
-      if (!address) {
-        router.push('/profile/address');
-        return;
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Not authenticated");
       }
   
-      const token = localStorage.getItem('token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/transactions`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}` // Make sure token is sent
-        },
-        body: JSON.stringify({
-          payment_method: paymentMethod,
-          address_id: address.id // Add address_id
-        })
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/transactions`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            payment_method: paymentMethod,
+          }),
+        }
+      );
   
       const data = await response.json();
-      console.log('Transaction response:', data); // Debug
   
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to create transaction');
+        throw new Error(data.message || 'Checkout failed');
       }
   
       if (data.success) {
-        if (paymentMethod === 'midtrans' && data.data.redirect_url) {
-          window.location.href = data.data.redirect_url;
+        if (paymentMethod === "midtrans" && data.data.snap_token) {
+          window.snap.pay(data.data.snap_token, {
+            onSuccess: function(result: any) {
+              router.push(`/checkout/success/${data.data.transaction_id}`);
+            },
+            onPending: function(result: any) {
+              router.push(`/checkout/success/${data.data.transaction_id}`);
+            },
+            onError: function(result: any) {
+              console.error('Payment error:', result);
+              toast.error("Payment failed");
+              setProcessing(false);
+            },
+            onClose: function() {
+              toast.error("Payment cancelled");
+              setProcessing(false);
+            }
+          });
         } else {
-          router.push('/orders');
-          toast.success('Order placed successfully');
+          router.push(`/checkout/success/${data.data.transaction_id}`);
         }
       }
     } catch (err) {
-      console.error('Checkout error:', err);
-      toast.error(err instanceof Error ? err.message : 'Failed to process checkout');
-    } finally {
+      console.error("Checkout error:", err);
+      toast.error(err instanceof Error ? err.message : "Failed to process checkout");
       setProcessing(false);
     }
   };
-  
-  const { subtotal, deliveryCost, total } = calculateTotals();
+
+  const { subtotal, ppn, total } = calculateTotals();
 
   if (loading) {
     return (
@@ -162,35 +168,54 @@ export default function CheckoutPage() {
           <div className="space-y-6">
             {/* Delivery Address */}
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <div className="flex justify-between items-start mb-4">
-                <h2 className="text-lg font-medium text-gray-900">Delivery Address</h2>
-                {!address && (
-                  <button
-                    onClick={() => router.push('/profile/address')}
-                    className="text-sm text-green-600 hover:text-green-700"
-                  >
-                    Add Address
-                  </button>
-                )}
-              </div>
+              <h2 className="text-lg font-medium text-gray-900 mb-4">
+                Pickup Information
+              </h2>
+              <div className="text-gray-600">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+                  <p className="text-sm text-yellow-800">
+                    <strong>Note:</strong> This is a self-pickup order. Please
+                    collect your items from the seller&opus; location. If you
+                    need delivery, you can discuss it directly with the seller
+                    (additional charges may apply).
+                  </p>
+                </div>
 
-              {address ? (
-                <div className="text-gray-600">
-                  <p className="font-medium text-gray-900 mb-1">Delivery Address</p>
-                  <p>{address.address}</p>
-                  <p>{address.kecamatan}, {address.kabupaten}</p>
-                  <p>Postal Code: {address.code_pos}</p>
-                </div>
-              ) : (
-                <div className="text-center py-4">
-                  <p className="text-gray-500">Please add a delivery address</p>
-                </div>
-              )}
+                {cartItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="border-b border-gray-200 py-4 last:border-0"
+                  >
+                    <p className="font-medium text-gray-900">{item.name}</p>
+                    <div className="mt-2 space-y-1">
+                      <p className="text-sm font-medium">Pickup Location:</p>
+                      <p>{item.seller_name}</p>
+                      <p>{item.seller_address}</p>
+                      <p>
+                        {item.seller_kecamatan}, {item.seller_kabupaten}
+                      </p>
+                      <p>{item.seller_province}</p>
+                      <p className="mt-2">
+                        <a
+                          href={`https://wa.me/${item.seller_phone}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-green-600 hover:text-green-700"
+                        >
+                          Contact Seller: {item.seller_phone}
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* Order Summary */}
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Order Summary</h2>
+              <h2 className="text-lg font-medium text-gray-900 mb-4">
+                Order Summary
+              </h2>
               <div className="divide-y">
                 {cartItems.map((item) => (
                   <div key={item.id} className="py-4 flex gap-4">
@@ -204,12 +229,21 @@ export default function CheckoutPage() {
                     <div className="flex-1">
                       <h3 className="font-medium text-gray-900">{item.name}</h3>
                       <p className="text-gray-600">
-                        {item.quantity} x Rp {(item.is_discount ? item.discount_price ?? item.price : item.price).toLocaleString()}
+                        {item.quantity} x Rp{" "}
+                        {(item.is_discount
+                          ? item.discount_price ?? item.price
+                          : item.price
+                        ).toLocaleString()}
                       </p>
                     </div>
                     <div className="text-right">
                       <p className="font-medium text-gray-900">
-                        Rp {((item.is_discount ? item.discount_price ?? item.price : item.price) * item.quantity).toLocaleString()}
+                        Rp{" "}
+                        {(
+                          (item.is_discount
+                            ? item.discount_price ?? item.price
+                            : item.price) * item.quantity
+                        ).toLocaleString()}
                       </p>
                     </div>
                   </div>
@@ -223,7 +257,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Delivery Cost</span>
-                  <span>Rp {deliveryCost.toLocaleString()}</span>
+                  <span>Rp {ppn.toLocaleString()}</span>
                 </div>
                 <div className="pt-4 flex justify-between font-medium text-gray-900 border-t">
                   <span>Total</span>
@@ -234,13 +268,19 @@ export default function CheckoutPage() {
 
             {/* Payment Method */}
             <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Payment Method</h2>
+              <h2 className="text-lg font-medium text-gray-900 mb-4">
+                Payment Method
+              </h2>
               <RadioGroup value={paymentMethod} onChange={setPaymentMethod}>
                 <div className="space-y-4">
                   <RadioGroup.Option
                     value="midtrans"
                     className={({ checked }) =>
-                      `${checked ? 'border-green-600 ring-2 ring-green-600' : 'border-gray-200'}
+                      `${
+                        checked
+                          ? "border-green-600 ring-2 ring-green-600"
+                          : "border-gray-200"
+                      }
                       relative flex cursor-pointer rounded-lg border p-4 focus:outline-none`
                     }
                   >
@@ -268,7 +308,11 @@ export default function CheckoutPage() {
                   <RadioGroup.Option
                     value="cod"
                     className={({ checked }) =>
-                      `${checked ? 'border-green-600 ring-2 ring-green-600' : 'border-gray-200'}
+                      `${
+                        checked
+                          ? "border-green-600 ring-2 ring-green-600"
+                          : "border-gray-200"
+                      }
                       relative flex cursor-pointer rounded-lg border p-4 focus:outline-none`
                     }
                   >
@@ -299,7 +343,7 @@ export default function CheckoutPage() {
             {/* Place Order Button */}
             <button
               onClick={handleCheckout}
-              disabled={processing || !address}
+              disabled={processing}
               className="w-full bg-green-600 text-white py-4 px-6 rounded-xl font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {processing ? (

@@ -3,9 +3,11 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Leaf, ShoppingBag, Sprout } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 const HeroSection = () => {
   const [currentText, setCurrentText] = useState(0);
+  const router = useRouter();
   const taglines = [
     "Save the Planet",
     "Support Local Business",
@@ -109,29 +111,28 @@ const HeroSection = () => {
               </motion.p>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.9 }}
-              className="flex flex-col sm:flex-row gap-3 md:gap-4 w-full sm:w-auto"
-            >
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2 font-medium"
-              >
-                <ShoppingBag className="w-5 h-5" />
-                Start Shopping
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="border-2 border-green-600 text-green-600 px-8 py-4 rounded-xl hover:bg-green-50 transition flex items-center justify-center gap-2 font-medium"
-              >
-                <Sprout className="w-5 h-5" />
-                Learn More
-              </motion.button>
-            </motion.div>
+            <div className="container mx-auto px-4 pt-20 relative z-10"> {/* Add z-index */}
+        <div className="flex gap-4">
+          <motion.button
+            onClick={() => router.push("/marketplace")}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2 font-medium relative z-10"
+          >
+            <ShoppingBag className="w-5 h-5" />
+            Start Shopping
+          </motion.button>
+          <motion.button
+            onClick={() => router.push("/about")}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className="border-2 border-green-600 text-green-600 px-8 py-4 rounded-xl hover:bg-green-50 transition flex items-center justify-center gap-2 font-medium relative z-10"
+          >
+            <Sprout className="w-5 h-5" />
+            Learn More
+          </motion.button>
+        </div>
+      </div>
 
             {/* Trust Indicators */}
             <motion.div

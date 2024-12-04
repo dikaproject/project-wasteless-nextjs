@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script"; // Add this import
 import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -23,6 +24,11 @@ export default function RootLayout({
         <AuthProvider>
           <LoadingProvider>{children}</LoadingProvider>
         </AuthProvider>
+        <Script
+          src="https://app.sandbox.midtrans.com/snap/snap.js"
+          strategy="beforeInteractive"
+          data-client-key={process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY}
+        />
         <Toaster position="top-right" />
       </body>
     </html>

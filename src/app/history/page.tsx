@@ -2,7 +2,17 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Loader2, Package, CreditCard, Clock, Ban, Home, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react";
+import {
+  Loader2,
+  Package,
+  CreditCard,
+  Clock,
+  Ban,
+  Home,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUpDown,
+} from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -20,45 +30,45 @@ interface Transaction {
 const PAGE_SIZE = 5;
 
 export default function History() {
-    const router = useRouter();
-    const [transactions, setTransactions] = useState<Transaction[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalTransactions, setTotalTransactions] = useState(0);
-    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const router = useRouter();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalTransactions, setTotalTransactions] = useState(0);
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
 
-    useEffect(() => {
-        fetchTransactions();
-      }, [currentPage, sortOrder]);
-    
-      const fetchTransactions = async () => {
-        try {
-          const token = localStorage.getItem("token");
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/customer/transactions/history?page=${currentPage}&limit=${PAGE_SIZE}&sort=${sortOrder}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-    
-          const data = await response.json();
-          if (data.success) {
-            setTransactions(data.data.transactions);
-            setTotalTransactions(data.data.total);
-          } else {
-            throw new Error(data.message);
-          }
-        } catch (error) {
-          console.error("Fetch error:", error);
-          toast.error("Failed to load transactions");
-        } finally {
-          setLoading(false);
+  useEffect(() => {
+    fetchTransactions();
+  }, [currentPage, sortOrder]);
+
+  const fetchTransactions = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/customer/transactions/history?page=${currentPage}&limit=${PAGE_SIZE}&sort=${sortOrder}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      };
-    
-      const totalPages = Math.ceil(totalTransactions / PAGE_SIZE);
+      );
+
+      const data = await response.json();
+      if (data.success) {
+        setTransactions(data.data.transactions);
+        setTotalTransactions(data.data.total);
+      } else {
+        throw new Error(data.message);
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      toast.error("Failed to load transactions");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const totalPages = Math.ceil(totalTransactions / PAGE_SIZE);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -121,12 +131,14 @@ export default function History() {
               <Home className="w-5 h-5" />
             </button>
             <button
-              onClick={() => setSortOrder(sortOrder === 'desc' ? 'asc' : 'desc')}
+              onClick={() =>
+                setSortOrder(sortOrder === "desc" ? "asc" : "desc")
+              }
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
             >
               <ArrowUpDown className="w-4 h-4" />
               <span className="text-sm">
-                {sortOrder === 'desc' ? 'Newest First' : 'Oldest First'}
+                {sortOrder === "desc" ? "Newest First" : "Oldest First"}
               </span>
             </button>
           </div>
@@ -195,7 +207,9 @@ export default function History() {
                       </p>
                     </div>
                     <button
-                      onClick={() => router.push(`/history/${transaction.id}`)}
+                      onClick={() =>
+                        router.push(`/checkout/success/${transaction.id}`)
+                      }
                       className="text-green-600 hover:text-green-700 text-sm font-medium"
                     >
                       View Details →
@@ -207,15 +221,15 @@ export default function History() {
           </div>
         )}
 
-{transactions.length > 0 && (
+        {transactions.length > 0 && (
           <div className="mt-6 flex justify-center items-center space-x-4">
             <button
-              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
               className={`p-2 rounded-full ${
                 currentPage === 1
-                  ? 'text-gray-400'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  ? "text-gray-400"
+                  : "text-gray-600 hover:bg-gray-100"
               }`}
             >
               <ChevronLeft className="w-5 h-5" />
@@ -224,12 +238,12 @@ export default function History() {
               Page {currentPage} of {totalPages}
             </span>
             <button
-              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
               className={`p-2 rounded-full ${
                 currentPage === totalPages
-                  ? 'text-gray-400'
-                  : 'text-gray-600 hover:bg-gray-100'
+                  ? "text-gray-400"
+                  : "text-gray-600 hover:bg-gray-100"
               }`}
             >
               <ChevronRight className="w-5 h-5" />
