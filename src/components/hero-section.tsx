@@ -151,6 +151,7 @@ const HeroSection = () => {
                       width={40}
                       height={40}
                       className="w-10 h-10 rounded-full border-2 border-white object-cover"
+                      priority
                     />
                   ))}
                 </div>
@@ -202,6 +203,7 @@ const HeroSection = () => {
                   width={600}
                   height={400}
                   className="rounded-2xl shadow-2xl"
+                  priority
                 />
               </motion.div>
 

@@ -92,6 +92,7 @@ const AboutPage = () => {
                   width={600}
                   height={400}
                   className="rounded-2xl shadow-xl"
+                  priority
                 />
               </motion.div>
             </div>
@@ -184,6 +185,7 @@ const AboutPage = () => {
                   width={120}
                   height={40}
                   className="opacity-70 hover:opacity-100 transition-opacity"
+                  priority
                 />
               </motion.div>
             ))}

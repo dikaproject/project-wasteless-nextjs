@@ -109,6 +109,7 @@ const BusinessPage = () => {
                 width={600}
                 height={400}
                 className="rounded-2xl shadow-2xl"
+                priority
               />
             </motion.div>
           </div>
