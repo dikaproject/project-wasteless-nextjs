@@ -44,6 +44,13 @@ export function middleware(request: NextRequest) {
   if (publicPaths.includes(path)) {
     return NextResponse.next();
   }
+  if (
+    path.startsWith('/_next/') || 
+    path.startsWith('/static/') || 
+    /\.(png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|ttf|eot|otf|mp4|webm|ogg|mp3|wav|json)$/.test(path) 
+  ) {
+    return NextResponse.next(); 
+  }
 
   // Check authentication
   if (!token || !userDataCookie) {
