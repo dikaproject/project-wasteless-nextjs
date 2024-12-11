@@ -6,6 +6,8 @@ WasteLess is a marketplace platform designed to reduce food waste by connecting 
 ---
 
 ## Table of Contents
+- [Account](#account)
+- [Reminder](#reminder)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Installation](#installation)
@@ -18,6 +20,21 @@ WasteLess is a marketplace platform designed to reduce food waste by connecting 
 - [License](#license)
 
 ---
+
+## Account
+- email : demoadminhackathon2024@gmail.com (Demo Admin)
+- passsword : adminhackathon2024
+---
+- email : intechofficialteam@gmail.com (Demo Seller)
+- password : nuha1234
+---
+- email : dikagilang2007@gmail.com (Demo User)
+- password : dika1234
+
+---
+
+## Reminder 
+- if error Unhandled Runtime Error ChunkLoadError use **incognito** or **refresh the page**
 
 ## Features
 
@@ -95,8 +112,13 @@ WasteLess is a marketplace platform designed to reduce food waste by connecting 
    cd frontend && npm install
    cd ../backend && npm install
    ```
-4. Set up the environment variables for both frontend and backend.
-5. Run the development server:
+4. Create a .env.local file in the project root with the following variables:
+   ```bash
+    NEXT_PUBLIC_API_URL=http://localhost:5000
+    MIDTRANS_CLIENT_KEY=your_midtrans_client_key
+   ```
+
+6. Run the development server:
    ```bash
    cd frontend && npm run dev
    cd ../backend && npm start
