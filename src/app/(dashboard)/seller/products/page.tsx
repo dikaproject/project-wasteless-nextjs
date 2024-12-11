@@ -104,15 +104,15 @@ export default function ProductsManagement() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">My Products</h1>
-          <p className="text-gray-600 mt-1">Manage your product listings</p>
+          <h1 className="text-2xl font-bold text-gray-800">Produk</h1>
+          <p className="text-gray-600 mt-1">Atur Produk</p>
         </div>
         <Link
           href="/seller/products/new"
           className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
         >
           <Plus className="w-5 h-5" />
-          Add Product
+          Tambah Produk
         </Link>
       </div>
 
@@ -133,7 +133,7 @@ export default function ProductsManagement() {
           onChange={(e) => setFilter(e.target.value)}
           className="px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-transparent"
         >
-          <option value="all">All Status</option>
+          <option value="all">Status</option>
           <option value="active">Active</option>
           <option value="pending">Pending</option>
         </select>

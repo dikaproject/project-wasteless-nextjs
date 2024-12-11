@@ -41,7 +41,7 @@ const HowToOrderSection = () => {
             viewport={{ once: true }}
             className="text-green-600 font-medium mb-4 inline-block"
           >
-            CARA KERJANYA
+            Pemesanan
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
@@ -53,7 +53,7 @@ const HowToOrderSection = () => {
           </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="grid text-gray-700 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
           {steps.map((step, index) => (
             <motion.div
               key={step.number}

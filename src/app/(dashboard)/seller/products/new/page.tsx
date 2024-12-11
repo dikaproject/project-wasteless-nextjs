@@ -205,7 +205,7 @@ export default function NewProduct() {
       </div>
 
       <div className="bg-white rounded-xl shadow-lg p-6">
-        <h1 className="text-2xl text-gray-600 font-bold mb-6">New Product</h1>
+        <h1 className="text-2xl text-gray-600 font-bold mb-6">Produk baru</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
@@ -222,7 +222,7 @@ export default function NewProduct() {
               className="mt-1 block w-full text-gray-600 rounded-md border border-gray-300 px-3 py-2"
               required
             >
-              <option value="">Select a category</option>
+              <option value="">Pilih kategori</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -236,7 +236,7 @@ export default function NewProduct() {
               htmlFor="name"
               className="block text-sm font-medium text-gray-700"
             >
-              Name
+              Nama
             </label>
             <input
               type="text"
@@ -254,7 +254,7 @@ export default function NewProduct() {
               htmlFor="price"
               className="block text-sm font-medium text-gray-700"
             >
-              Price
+              Harga
             </label>
             <div className="mt-1 relative rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -278,7 +278,7 @@ export default function NewProduct() {
               htmlFor="quantity"
               className="block text-sm font-medium text-gray-700"
             >
-              Quantity
+              Jumlah Produk
             </label>
             <input
               type="number"
@@ -296,7 +296,7 @@ export default function NewProduct() {
               htmlFor="massa"
               className="block text-sm font-medium text-gray-700"
             >
-              Mass (grams)
+              Berat (grams)
             </label>
             <input
               type="text"
@@ -314,7 +314,7 @@ export default function NewProduct() {
               htmlFor="expired"
               className="block text-sm font-medium text-gray-700"
             >
-              Expiry Date
+              Tanggal Expired
             </label>
             <input
               type="date"
@@ -399,7 +399,7 @@ export default function NewProduct() {
                     htmlFor="start_date"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Discount Start Date
+                    Tanggal Mulai Diskon
                   </label>
                   <input
                     type="date"
@@ -421,7 +421,7 @@ export default function NewProduct() {
                     htmlFor="end_date"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Discount End Date
+                    Tanggal Berakhir Diskon
                   </label>
                   <input
                     type="date"
@@ -494,7 +494,7 @@ export default function NewProduct() {
               className="text-green-500 rounded-sm border-gray-300 focus:ring-green-500"
             />
             <label htmlFor="is_discount" className="ml-2 text-sm text-gray-700">
-              Add Discount
+              Tambah Diskon
             </label>
           </div>
 

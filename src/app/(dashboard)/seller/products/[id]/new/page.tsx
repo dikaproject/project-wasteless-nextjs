@@ -65,7 +65,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
         setCategories(data.data);
       }
     } catch (error) {
-      toast.error('Failed to load categories');
+      toast.error('Gagal memuat kategori');
     }
   };
 
@@ -101,11 +101,10 @@ export default function EditProduct({ params }: { params: { id: string } }) {
         }
       }
     } catch (error) {
-      toast.error('Failed to load product details');
+      toast.error('Gagal memuat detail produk');
     }
   };
 
-  // Reuse existing handlers from NewProduct component
   const formatCurrency = (value: string) => {
     const number = value.replace(/\D/g, '');
     return new Intl.NumberFormat('id-ID').format(Number(number));
@@ -119,7 +118,6 @@ export default function EditProduct({ params }: { params: { id: string } }) {
     return String(numPrice - discountAmount);
   };
 
-  // File handling functions (same as NewProduct)
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     handleFile(file);
@@ -134,12 +132,12 @@ export default function EditProduct({ params }: { params: { id: string } }) {
   const handleFile = (file: File | undefined) => {
     if (file) {
       if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
-        toast.error('Please upload only JPG, JPEG or PNG images');
+        toast.error('Mohon unggah gambar dalam format JPG, JPEG atau PNG');
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('Image size should be less than 5MB');
+        toast.error('Ukuran gambar harus kurang dari 5MB');
         return;
       }
 
@@ -208,19 +206,18 @@ export default function EditProduct({ params }: { params: { id: string } }) {
       const data = await response.json();
 
       if (data.success) {
-        toast.success('Product updated successfully');
+        toast.success('Produk berhasil diperbarui');
         router.push('/seller/products');
       } else {
         throw new Error(data.message);
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to update product');
+      toast.error(error instanceof Error ? error.message : 'Gagal memperbarui produk');
     } finally {
       setLoading(false);
     }
   };
 
-  // Return the same JSX as NewProduct but with updated title and button text
   return (
     <div className="p-6">
       <div className="mb-6">
@@ -229,19 +226,19 @@ export default function EditProduct({ params }: { params: { id: string } }) {
           className="flex items-center text-gray-600 hover:text-gray-900"
         >
           <ArrowLeft className="w-5 h-5 mr-2" />
-          Back
+          Kembali
         </button>
       </div>
 
       <div className="bg-white rounded-xl shadow-lg p-6">
-        <h1 className="text-2xl text-gray-600 font-bold mb-6">Edit Product</h1>
+        <h1 className="text-2xl text-gray-600 font-bold mb-6">Edit Produk</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
               htmlFor="category_id"
               className="block text-sm font-medium text-gray-700"
             >
-              Category
+              Kategori
             </label>
             <select
               id="category_id"
@@ -251,7 +248,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
               className="mt-1 block w-full text-gray-600 rounded-md border border-gray-300 px-3 py-2"
               required
             >
-              <option value="">Select a category</option>
+              <option value="">Pilih kategori</option>
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
                   {category.name}
@@ -265,7 +262,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
               htmlFor="name"
               className="block text-sm font-medium text-gray-700"
             >
-              Name
+              Nama
             </label>
             <input
               type="text"
@@ -283,7 +280,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
               htmlFor="price"
               className="block text-sm font-medium text-gray-700"
             >
-              Price
+              Harga
             </label>
             <div className="mt-1 relative rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -307,7 +304,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
               htmlFor="quantity"
               className="block text-sm font-medium text-gray-700"
             >
-              Quantity
+              Jumlah
             </label>
             <input
               type="number"
@@ -325,7 +322,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
               htmlFor="massa"
               className="block text-sm font-medium text-gray-700"
             >
-              Mass (grams)
+              Massa (gram)
             </label>
             <input
               type="text"
@@ -376,7 +373,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                     htmlFor="discount"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Discount (%)
+                    Diskon (%)
                   </label>
                   <input
                     type="number"
@@ -400,7 +397,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                     htmlFor="discount_price"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Price After Discount
+                    Harga Setelah Diskon
                   </label>
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -428,7 +425,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                     htmlFor="start_date"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Discount Start Date
+                    Tanggal Mulai Diskon
                   </label>
                   <input
                     type="date"
@@ -450,7 +447,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                     htmlFor="end_date"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Discount End Date
+                    Tanggal Akhir Diskon
                   </label>
                   <input
                     type="date"
@@ -484,7 +481,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
                   <div className="relative w-64 h-64 overflow-hidden rounded-xl">
                     <Image
                       src={imagePreview}
-                      alt="Product Image"
+                      alt="Gambar Produk"
                       layout="fill"
                       objectFit="cover"
                     />
@@ -500,7 +497,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
               ) : (
                 <div className="flex flex-col items-center text-gray-600">
                   <Upload className="w-12 h-12" />
-                  <p className="text-sm">Drag and drop or click to upload</p>
+                  <p className="text-sm">Seret dan lepas atau klik untuk mengunggah</p>
                 </div>
               )}
             </div>
@@ -523,7 +520,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
               className="text-green-500 rounded-sm border-gray-300 focus:ring-green-500"
             />
             <label htmlFor="is_discount" className="ml-2 text-sm text-gray-700">
-              Add Discount
+              Tambah Diskon
             </label>
           </div>
 
@@ -532,7 +529,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
           type="submit"
           className="bg-green-600 text-white py-2 px-4 rounded-xl hover:bg-green-700 transition-colors duration-200"
         >
-          {loading ? "Loading..." : "Update Product"}
+          {loading ? "Memuat..." : "Perbarui Produk"}
         </button>
           </div>
         </form>

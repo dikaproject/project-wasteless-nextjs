@@ -104,7 +104,7 @@ const HeroSection = () => {
                 transition={{ delay: 0.7 }}
                 className="text-lg md:text-xl text-gray-600 leading-relaxed"
               >
-                Bergabunglah dengan komunitas kami yang terdiri dari konsumen sadar dan bisnis lokal dalam melawan pemborosan makanan. Dapatkan penawaran hebat sambil memberikan dampak positif.
+                Bergabunglah dengan komunitas kami yang terdiri dari bisnis lokal dalam melawan pemborosan makanan. 
               </motion.p>
             </div>
 
@@ -226,7 +226,7 @@ const HeroSection = () => {
                       CO₂ Diselamatkan
                     </div>
                     <div className="text-sm md:text-base text-green-600 font-bold">
-                      1.2k ton
+                      1.2 ton
                     </div>
                   </div>
                 </div>
