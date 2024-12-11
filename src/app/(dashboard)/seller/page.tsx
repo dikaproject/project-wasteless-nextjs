@@ -9,6 +9,20 @@ interface DashboardData {
   totalProducts: number;
   pendingProducts: number;
   activeProducts: number;
+  recentOrders: {
+    id: number;
+    total_amount: number;
+    status: string;
+    created_at: string;
+    user_name: string;
+    total_items: number;
+  }[];
+  productPerformance: {
+    name: string;
+    total_sales: number;
+    units_sold: number;
+    revenue: number;
+  }[];
 }
 
 export default function SellerDashboard() {
@@ -60,6 +74,62 @@ export default function SellerDashboard() {
       </div>
     );
   }
+
+  const RecentOrders = ({ orders }: { orders: DashboardData['recentOrders'] }) => (
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead>
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Order ID</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200">
+          {orders.map((order) => (
+            <tr key={order.id}>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#{order.id}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{order.user_name}</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                Rp {order.total_amount.toLocaleString()}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                  order.status === 'delivered' 
+                    ? 'bg-green-100 text-green-800'
+                    : order.status === 'pending'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {order.status}
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+  
+  const ProductPerformance = ({ products }: { products: DashboardData['productPerformance'] }) => (
+    <div className="space-y-4">
+      {products.map((product) => (
+        <div key={product.name} className="bg-gray-50 rounded-lg p-4">
+          <div className="flex justify-between items-start mb-2">
+            <h3 className="font-medium text-gray-900">{product.name}</h3>
+            <span className="text-sm text-green-600 font-medium">
+              Rp {product.revenue.toLocaleString()}
+            </span>
+          </div>
+          <div className="flex justify-between text-sm text-gray-500">
+            <span>{product.total_sales} orders</span>
+            <span>{product.units_sold} units sold</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   const stats = [
     {
@@ -118,28 +188,26 @@ export default function SellerDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Orders Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="bg-white rounded-lg shadow p-6"
-        >
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Order Terbaru</h2>
-          {/* Add orders table/list here */}
-        </motion.div>
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: 0.3 }}
+    className="bg-white rounded-lg shadow p-6"
+  >
+    <h2 className="text-lg font-medium text-gray-900 mb-4">Order Terbaru</h2>
+    {data?.recentOrders && <RecentOrders orders={data.recentOrders} />}
+  </motion.div>
 
-        {/* Product Performance Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="bg-white rounded-lg shadow p-6"
-        >
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Performa Produk</h2>
-          {/* Add product stats/chart here */}
-        </motion.div>
-      </div>
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5, delay: 0.4 }}
+    className="bg-white rounded-lg shadow p-6"
+  >
+    <h2 className="text-lg font-medium text-gray-900 mb-4">Performa Produk</h2>
+    {data?.productPerformance && <ProductPerformance products={data.productPerformance} />}
+  </motion.div>
+</div>
     </div>
   );
 }

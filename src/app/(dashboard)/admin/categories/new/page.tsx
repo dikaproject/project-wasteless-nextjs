@@ -15,6 +15,18 @@ export default function NewCategory() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // validasi category name max 25 karakter 
+    if (formData.name.length > 25) {
+      toast.error('Kategori Harus Kurang Dari 25 Karakter');
+      return;
+    }
+    // validasi jika ada angka
+    if (/\d/.test(formData.name)) {
+      toast.error('Kategori tidak boleh mengandung angka');
+      return;
+    }
+    e.preventDefault();
     setLoading(true);
 
     try {

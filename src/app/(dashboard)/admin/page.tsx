@@ -33,12 +33,19 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+import { useRouter } from 'next/navigation';
 
 interface DashboardData {
   totalOrders: number;
   totalProducts: number;
   totalUsers: number;
   totalRevenue: number;
+  trends: {
+    revenue: number;
+    orders: number;
+    products: number;
+    users: number;
+  };
   recentOrders: {
     id: number;
     user_name: string;
@@ -54,11 +61,21 @@ interface DashboardData {
     email: string;
     created_at: string;
   }[];
+  recentSellers: {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    created_at: string;
+    photo_ktp: string;
+    photo_usaha: string;
+  }[];
 }
 
 export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<DashboardData | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     fetchDashboardData();
@@ -104,31 +121,31 @@ export default function AdminDashboard() {
   }
 
   const stats = [
-    {
-      title: 'Total Revenue',
-      value: `Rp ${data.totalRevenue.toLocaleString()}`,
-      icon: DollarSign,
-      trend: 12, // Example trend percentage
-    },
-    {
-      title: 'Total Orders',
-      value: data.totalOrders.toString(),
-      icon: ShoppingBag,
-      trend: 8,
-    },
-    {
-      title: 'Total Products',
-      value: data.totalProducts.toString(),
-      icon: BarChart,
-      trend: -5,
-    },
-    {
-      title: 'Total Users',
-      value: data.totalUsers.toString(),
-      icon: Users,
-      trend: 15,
-    },
-  ];
+  {
+    title: 'Total Revenue',
+    value: `Rp ${data.totalRevenue.toLocaleString()}`,
+    icon: DollarSign,
+    trend: data.trends.revenue,
+  },
+  {
+    title: 'Total Orders',
+    value: data.totalOrders.toString(),
+    icon: ShoppingBag,
+    trend: data.trends.orders,
+  },
+  {
+    title: 'Total Products',
+    value: data.totalProducts.toString(),
+    icon: BarChart,
+    trend: data.trends.products,
+  },
+  {
+    title: 'Total Users',
+    value: data.totalUsers.toString(),
+    icon: Users,
+    trend: data.trends.users,
+  },
+];
 
   return (
     <div className="p-6 space-y-8">
@@ -215,6 +232,80 @@ export default function AdminDashboard() {
             </tbody>
           </table>
         </div>
+      </div>
+
+            {/* Recent Sellers */}
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold text-gray-800">Recent Seller Applications</h2>
+          <button
+            onClick={() => router.push('/admin/seller-applications')}
+            className="text-sm text-green-600 hover:text-green-700"
+          >
+            View All
+          </button>
+        </div>
+        
+        {data.recentSellers.length === 0 ? (
+          <p className="text-gray-500 text-center py-4">No pending seller applications</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="text-left border-b">
+                  <th className="pb-3 text-gray-600">Seller</th>
+                  <th className="pb-3 text-gray-600">Contact</th>
+                  <th className="pb-3 text-gray-600">Documents</th>
+                  <th className="pb-3 text-gray-600">Applied</th>
+                  <th className="pb-3 text-gray-600">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.recentSellers.map((seller) => (
+                  <tr key={seller.id} className="border-b last:border-0">
+                    <td className="py-4 text-gray-600">{seller.name}</td>
+                    <td className="py-4">
+                      <div className="text-gray-600">{seller.email}</div>
+                      <div className="text-gray-500 text-sm">{seller.phone}</div>
+                    </td>
+                    <td className="py-4">
+                      <div className="flex gap-2">
+                        <a
+                          href={`${process.env.NEXT_PUBLIC_API_URL}/uploads/ktp/${seller.photo_ktp}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-700 text-sm"
+                        >
+                          View KTP
+                        </a>
+                        <span className="text-gray-300">|</span>
+                        <a
+                          href={`${process.env.NEXT_PUBLIC_API_URL}/uploads/usaha/${seller.photo_usaha}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-700 text-sm"
+                        >
+                          View Business
+                        </a>
+                      </div>
+                    </td>
+                    <td className="py-4 text-gray-500">
+                      {formatDistance(new Date(seller.created_at), new Date(), { addSuffix: true })}
+                    </td>
+                    <td className="py-4">
+                      <button
+                        onClick={() => router.push(`/admin/seller-applications`)}
+                        className="text-sm bg-green-100 text-green-600 px-3 py-1 rounded-full hover:bg-green-200"
+                      >
+                        Review
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {/* Recent Users */}

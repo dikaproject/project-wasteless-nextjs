@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import Image from "next/image";
 
 const Navbar = () => {
   const router = useRouter();
@@ -39,14 +40,23 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           {/* Logo remains same */}
-          <motion.div
+                    <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Link href="/" className="text-2xl font-bold flex items-center">
-              <span className="text-3xl mr-2">🌱</span>
-              WasteLess
+            <Link href="/" className="text-2xl font-bold flex items-center gap-3">
+              <div className=" p-1 rounded-lg">
+                <Image 
+                  src="/images/logo.png"
+                  alt="WasteLess Logo"
+                  width={48}
+                  height={48}
+                  className="object-contain"
+                  priority
+                />
+              </div>
+              <span className="text-white font-semibold">WasteLess</span>
             </Link>
           </motion.div>
 

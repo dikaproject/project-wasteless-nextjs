@@ -81,21 +81,32 @@ export default function EditProduct({ params }: { params: { id: string } }) {
       
       if (data.success) {
         const product = data.data;
+        
+        // Add timezone offset correction for dates
+        const formatDate = (dateString: string | null) => {
+          if (!dateString) return '';
+          const date = new Date(dateString);
+          // Ensure we get YYYY-MM-DD in local timezone
+          return new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+            .toISOString()
+            .split('T')[0];
+        };
+  
         setFormData({
           category_id: String(product.category_id),
           name: product.name,
           quantity: String(product.quantity),
           massa: String(product.massa),
-          expired: product.expired.split('T')[0],
+          expired: formatDate(product.expired),
           photo: null,
           price: String(product.price),
           is_discount: product.is_discount,
-          discount: String(product.discount_percentage || ''),
-          discount_price: String(product.discount_price || ''),
-          start_date: product.start_date ? product.start_date.split('T')[0] : '',
-          end_date: product.end_date ? product.end_date.split('T')[0] : '',
+          discount: product.discount_percentage ? String(product.discount_percentage) : '',
+          discount_price: product.discount_price ? String(product.discount_price) : '',
+          start_date: formatDate(product.start_date),
+          end_date: formatDate(product.end_date),
         });
-        
+  
         if (product.photo) {
           setImagePreview(`${process.env.NEXT_PUBLIC_API_URL}/uploads/products/${product.photo}`);
         }
@@ -153,7 +164,17 @@ export default function EditProduct({ params }: { params: { id: string } }) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
 
-    if (name === 'price') {
+    if (name === 'start_date' || name === 'end_date') {
+      // Add timezone offset to maintain the correct date
+      const date = new Date(value);
+      const offset = date.getTimezoneOffset();
+      date.setMinutes(date.getMinutes() + offset);
+      
+      setFormData(prev => ({
+        ...prev,
+        [name]: date.toISOString().split('T')[0]
+      }));
+    } if (name === 'price') {
       const formattedValue = formatCurrency(value);
       const rawPrice = formattedValue.replace(/\./g, '');
       setFormData(prev => ({
@@ -178,20 +199,34 @@ export default function EditProduct({ params }: { params: { id: string } }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-
+  
     try {
       const token = localStorage.getItem('token');
       const formDataToSend = new FormData();
+  
+      // Basic fields
+      formDataToSend.append('name', formData.name);
+      formDataToSend.append('category_id', formData.category_id);
+      formDataToSend.append('quantity', formData.quantity);
+      formDataToSend.append('massa', formData.massa);
+      formDataToSend.append('expired', formData.expired);
+      formDataToSend.append('price', formData.price);
+  
+      // Photo if changed
+      if (formData.photo) {
+        formDataToSend.append('photo', formData.photo);
+      }
+  
+      // Discount fields
+      formDataToSend.append('is_discount', formData.is_discount ? 'true' : 'false');
+      
+      if (formData.is_discount) {
+        formDataToSend.append('discount', formData.discount); // Changed from discount_percentage
+        formDataToSend.append('start_date', formData.start_date);
+        formDataToSend.append('end_date', formData.end_date);
+      }
 
-      // Append all form fields
-      Object.entries(formData).forEach(([key, value]) => {
-        if (key === 'photo' && value) {
-          formDataToSend.append('photo', value as Blob);
-        } else if (value !== null && value !== '') {
-          formDataToSend.append(key, String(value));
-        }
-      });
-
+  
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/seller/products/${params.id}`,
         {
@@ -202,9 +237,14 @@ export default function EditProduct({ params }: { params: { id: string } }) {
           body: formDataToSend,
         }
       );
-
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update product');
+      }
+  
       const data = await response.json();
-
+  
       if (data.success) {
         toast.success('Produk berhasil diperbarui');
         router.push('/seller/products');
@@ -212,7 +252,8 @@ export default function EditProduct({ params }: { params: { id: string } }) {
         throw new Error(data.message);
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Gagal memperbarui produk');
+      console.error('Update error:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to update product');
     } finally {
       setLoading(false);
     }
