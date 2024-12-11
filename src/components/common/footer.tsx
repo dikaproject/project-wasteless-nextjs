@@ -41,13 +41,14 @@ const Footer = () => {
             className="space-y-6"
           >
             <Link href="/" className="block">
-              <Image
-                src="/logo-white.png" // Pastikan untuk menambahkan logo putih
-                alt="WasteLess Logo"
-                width={150}
-                height={40}
-                className="object-contain"
-              />
+              <Image 
+                  src="/images/logo-wasteless.png"
+                  alt="WasteLess Logo"
+                  width={48}
+                  height={48}
+                  className="object-contain"
+                  priority
+                />
             </Link>
             <p className="text-sm">
               Bergabunglah dengan kami dalam misi mengurangi limbah makanan dan menciptakan masa depan yang berkelanjutan untuk semua.

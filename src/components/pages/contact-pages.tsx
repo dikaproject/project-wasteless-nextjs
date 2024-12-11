@@ -127,9 +127,9 @@ const ContactPage = () => {
                   <h3 className="text-2xl font-bold mb-4 text-gray-600">Informasi Kontak</h3>
                   <div className="space-y-4">
                     {[
-                      { icon: <Phone />, text: '+1 (555) 123-4567' },
-                      { icon: <Mail />, text: 'contact@wasteless.com' },
-                      { icon: <MapPin />, text: '123 Green Street, Eco City' }
+                      { icon: <Phone />, text: '+62 812-2784-8422' },
+                      { icon: <Mail />, text: 'intechofficialteam@gmail.com' },
+                      { icon: <MapPin />, text: 'Jl. DI Panjaitan No.128, Karangreja, Purwokerto Kidul' }
                     ].map((item, index) => (
                       <motion.div
                         key={index}

@@ -48,7 +48,7 @@ const Navbar = () => {
             <Link href="/" className="text-2xl font-bold flex items-center gap-3">
               <div className=" p-1 rounded-lg">
                 <Image 
-                  src="/images/logo.png"
+                  src="/images/logo-wasteless.png"
                   alt="WasteLess Logo"
                   width={48}
                   height={48}
