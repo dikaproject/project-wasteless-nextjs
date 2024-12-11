@@ -15,6 +15,12 @@ const nextConfig = {
         pathname: '/api/uploads/**',
       },
       {
+        protocol: 'http',
+        hostname: '93.127.172.204',
+        port: '5000',
+        pathname: '/api/uploads/**',
+      },
+      {
         protocol: 'https',
         hostname: 'wasteless.intechsosmed.my.id',
         port: '',
