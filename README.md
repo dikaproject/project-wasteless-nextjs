@@ -22,6 +22,10 @@ WasteLess is a marketplace platform designed to reduce food waste by connecting 
 ---
 
 ## Account
+
+Link Demo Website : https://wasteless.intechsosmed.my.id
+
+---
 - email : demoadminhackathon2024@gmail.com (Demo Admin)
 - passsword : adminhackathon2024
 ---
