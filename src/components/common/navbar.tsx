@@ -52,7 +52,7 @@ const Navbar = () => {
 
           {/* Desktop Menu remains same */}
           <div className="hidden md:flex space-x-6">
-            {["Home", "Products", "For UMKM", "About", "Contact", "History Transaction"].map(
+            {["Home", "Products", "UMKM", "About", "Contact", "History Transaction"].map(
               (item, i) => (
                 <motion.div
                   key={item}
@@ -64,7 +64,7 @@ const Navbar = () => {
                     href={
                       item === "Products"
                         ? "/marketplace"
-                        : item === "For UMKM"
+                        : item === "UMKM"
                         ? "/business"
                         : item === "Home"
                         ? "/"
@@ -231,13 +231,13 @@ const Navbar = () => {
             >
               <div className="flex flex-col space-y-4">
                 {/* Navigation Links */}
-                {["Home", "Products", "For UMKM", "About", "Contact", "History Transaction"].map((item) => (
+                {["Home", "Products", "UMKM", "About", "Contact", "History Transaction"].map((item) => (
                   <Link
                     key={item}
                     href={
                       item === "Products"
                         ? "/marketplace"
-                        : item === "For UMKM"
+                        : item === "UMKM"
                         ? "/business"
                         : item === "Home"
                         ? "/"

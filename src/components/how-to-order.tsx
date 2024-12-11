@@ -7,26 +7,26 @@ const HowToOrderSection = () => {
   const steps = [
     {
       number: "01",
-      title: "Browse Products",
-      description: "Explore our wide range of products from local businesses",
+      title: "Telusuri Produk",
+      description: "Jelajahi berbagai produk kami dari bisnis lokal",
       icon: <ShoppingBag className="w-6 h-6" />,
     },
     {
       number: "02",
-      title: "Add to Cart",
-      description: "Select your items and add them to your shopping cart",
+      title: "Tambahkan ke Keranjang",
+      description: "Pilih barang Anda dan tambahkan ke keranjang belanja Anda",
       icon: <ShoppingBag className="w-6 h-6" />,
     },
     {
       number: "03",
-      title: "Checkout",
-      description: "Complete your purchase with our secure payment system",
+      title: "Pembayaran",
+      description: "Selesaikan pembelian Anda dengan sistem pembayaran aman kami",
       icon: <ShoppingBag className="w-6 h-6" />,
     },
     {
       number: "04",
-      title: "Pick Up / Delivery",
-      description: "Choose between pickup or delivery to receive your items",
+      title: "Ambil / Pengiriman",
+      description: "Pilih antara pengambilan atau pengiriman untuk menerima barang Anda",
       icon: <ShoppingBag className="w-6 h-6" />,
     },
   ];
@@ -41,7 +41,7 @@ const HowToOrderSection = () => {
             viewport={{ once: true }}
             className="text-green-600 font-medium mb-4 inline-block"
           >
-            HOW IT WORKS
+            CARA KERJANYA
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
@@ -49,7 +49,7 @@ const HowToOrderSection = () => {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 md:mb-6"
           >
-            Order in 4 Simple Steps
+            Pesan dalam 4 Langkah Sederhana
           </motion.h2>
         </div>
 

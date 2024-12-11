@@ -63,19 +63,19 @@ export default function SellerDashboard() {
 
   const stats = [
     {
-      title: 'Total Products',
+      title: 'Total Produk',
       value: data?.totalProducts || 0,
       icon: Package,
       color: 'bg-blue-500',
     },
     {
-      title: 'Pending Approval',
+      title: 'Menunggu Persetujuan',
       value: data?.pendingProducts || 0,
       icon: Clock,
       color: 'bg-yellow-500',
     },
     {
-      title: 'Active Products',
+      title: 'Aktive Produk',
       value: data?.activeProducts || 0,
       icon: ShoppingBag,
       color: 'bg-green-500',
@@ -91,7 +91,7 @@ export default function SellerDashboard() {
       >
         <h1 className="text-2xl font-bold text-gray-900">Seller Dashboard</h1>
         <p className="mt-1 text-sm text-gray-600">
-          Manage your products and monitor your sales
+          Atur Produk Anda Dan Penjualan
         </p>
       </motion.div>
 
@@ -125,7 +125,7 @@ export default function SellerDashboard() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="bg-white rounded-lg shadow p-6"
         >
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Recent Orders</h2>
+          <h2 className="text-lg font-medium text-gray-900 mb-4">Order Terbaru</h2>
           {/* Add orders table/list here */}
         </motion.div>
 
@@ -136,7 +136,7 @@ export default function SellerDashboard() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="bg-white rounded-lg shadow p-6"
         >
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Product Performance</h2>
+          <h2 className="text-lg font-medium text-gray-900 mb-4">Performa Produk</h2>
           {/* Add product stats/chart here */}
         </motion.div>
       </div>

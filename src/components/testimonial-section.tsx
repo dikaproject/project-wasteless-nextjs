@@ -6,31 +6,31 @@ import { Star, Quote } from "lucide-react";
 const TestimonialSection = () => {
   const testimonials = [
     {
-      author: "Sarah Johnson",
-      role: "Restaurant Owner",
+      author: "Rasya Dika Pratama",
+      role: "Pemilik Restoran",
       content:
-        "WasteLess has completely transformed how we manage our inventory. We've reduced waste by 60% and increased profits!",
+        "WasteLess telah mengubah cara kami mengelola stok kami. Kami telah mengurangi limbah sebesar 60% dan meningkatkan keuntungan!",
       image: "/cantikku.jpeg",
       rating: 5,
-      stats: "60% waste reduction",
+      stats: "Pengurangan limbah 60%",
     },
     {
-      author: "Michael Chen",
-      role: "Cafe Manager",
+      author: "Arya Fathdillah",
+      role: "Manajer Kafe",
       content:
-        "The platform is incredibly easy to use and has helped us connect with conscious consumers. It's a win-win situation.",
+        "Platform ini sangat mudah digunakan dan telah membantu kami terhubung dengan konsumen. Ini adalah situasi yang saling menguntungkan.",
       image: "/cantikku.jpeg",
       rating: 5,
-      stats: "40% profit increase",
+      stats: "Peningkatan keuntungan 40%",
     },
     {
-      author: "Emma Davis",
-      role: "Regular Customer",
+      author: "Serlin",
+      role: "Pelanggan Tetap",
       content:
-        "I love being able to get quality food at great prices while helping reduce food waste. The service is amazing!",
+        "Saya suka bisa mendapatkan makanan berkualitas dengan harga yang rendah bisa sambil membantu mengurangi limbah makanan. Layanannya luar biasa!",
       image: "/cantikku.jpeg",
       rating: 5,
-      stats: "30% savings",
+      stats: "Penghematan 30%",
     },
   ];
 
@@ -50,7 +50,7 @@ const TestimonialSection = () => {
             viewport={{ once: true }}
             className="text-sm md:text-base text-green-600 font-medium mb-4 inline-block px-4 py-1.5 bg-green-50 rounded-full"
           >
-            TESTIMONIALS
+            TESTIMONI
           </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
@@ -58,7 +58,7 @@ const TestimonialSection = () => {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 md:mb-6"
           >
-            What Our Users Say
+            Apa Kata Pengguna Kami
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -66,7 +66,7 @@ const TestimonialSection = () => {
             viewport={{ once: true }}
             className="text-gray-600 max-w-2xl mx-auto"
           >
-            Join thousands of satisfied users who are making a difference
+            Bergabunglah dengan ribuan pengguna yang puas yang membuat perbedaan
           </motion.p>
         </div>
 
@@ -155,16 +155,16 @@ const TestimonialSection = () => {
             <div className="flex items-center gap-2">
               <Star className="w-4 h-4 md:w-5 md:h-5 text-yellow-400 fill-current" />
               <span className="text-sm md:text-base text-gray-600">
-                4.9/5 rating
+                4.9/5 penilaian
               </span>
             </div>
             <div className="hidden md:block text-gray-600">|</div>
             <div className="text-sm md:text-base text-gray-600">
-              1000+ reviews
+              1000+ ulasan
             </div>
             <div className="hidden md:block text-gray-600">|</div>
             <div className="text-sm md:text-base text-gray-600">
-              500+ businesses
+              500+ bisnis
             </div>
           </div>
         </motion.div>

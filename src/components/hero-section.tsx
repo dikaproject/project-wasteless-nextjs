@@ -9,9 +9,8 @@ const HeroSection = () => {
   const [currentText, setCurrentText] = useState(0);
   const router = useRouter();
   const taglines = [
-    "Save the Planet",
-    "Support Local Business",
-    "Eat Sustainably",
+    "Selamatkan Bumi",
+    "Dukung Bisnis Lokal",
   ];
 
   useEffect(() => {
@@ -59,11 +58,11 @@ const HeroSection = () => {
         >
           <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg">
             <div className="text-green-600 font-bold">2.5M+</div>
-            <div className="text-sm text-gray-600">Food Saved</div>
+            <div className="text-sm text-gray-600">Makanan Diselamatkan</div>
           </div>
           <div className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-lg">
             <div className="text-green-600 font-bold">500+</div>
-            <div className="text-sm text-gray-600">Partners</div>
+            <div className="text-sm text-gray-600">Mitra</div>
           </div>
         </motion.div>
 
@@ -81,11 +80,11 @@ const HeroSection = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="inline-block bg-green-100 text-green-600 px-4 py-2 rounded-full text-sm font-medium"
               >
-                🌿 Eco-friendly Initiative
+                🌿 Ramah Lingkungan
               </motion.div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 leading-tight">
-                Reduce Food Waste, <br />
+                Kurangi Limbah, <br />
                 <AnimatePresence mode="wait">
                   <motion.span
                     key={currentText}
@@ -105,9 +104,7 @@ const HeroSection = () => {
                 transition={{ delay: 0.7 }}
                 className="text-lg md:text-xl text-gray-600 leading-relaxed"
               >
-                Join our community of conscious consumers and local businesses
-                in the fight against food waste. Get great deals while making a
-                positive impact.
+                Bergabunglah dengan komunitas kami yang terdiri dari konsumen sadar dan bisnis lokal dalam melawan pemborosan makanan. Dapatkan penawaran hebat sambil memberikan dampak positif.
               </motion.p>
             </div>
 
@@ -120,7 +117,7 @@ const HeroSection = () => {
             className="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2 font-medium relative z-10"
           >
             <ShoppingBag className="w-5 h-5" />
-            Start Shopping
+            Mulai Belanja
           </motion.button>
           <motion.button
             onClick={() => router.push("/about")}
@@ -129,7 +126,7 @@ const HeroSection = () => {
             className="border-2 border-green-600 text-green-600 px-8 py-4 rounded-xl hover:bg-green-50 transition flex items-center justify-center gap-2 font-medium relative z-10"
           >
             <Sprout className="w-5 h-5" />
-            Learn More
+            Pelajari Lebih Lanjut
           </motion.button>
         </div>
       </div>
@@ -147,7 +144,7 @@ const HeroSection = () => {
                     <Image
                       key={i}
                       src="/cantikku.jpeg"
-                      alt={`User profile ${i + 1}`}
+                      alt={`Profil pengguna ${i + 1}`}
                       width={40}
                       height={40}
                       className="w-10 h-10 rounded-full border-2 border-white object-cover"
@@ -156,8 +153,8 @@ const HeroSection = () => {
                   ))}
                 </div>
                 <div className="text-sm text-gray-600">
-                  Trusted by{" "}
-                  <span className="font-bold text-gray-800">10,000+</span> users
+                  Dipercaya oleh{" "}
+                  <span className="font-bold text-gray-800">10,000+</span> pengguna
                 </div>
               </div>
             </motion.div>
@@ -199,7 +196,7 @@ const HeroSection = () => {
               >
                 <Image
                   src="/hero-section.jpg"
-                  alt="Food Sustainability"
+                  alt="Keberlanjutan Makanan"
                   width={600}
                   height={400}
                   className="rounded-2xl shadow-2xl"
@@ -226,10 +223,10 @@ const HeroSection = () => {
                   </div>
                   <div>
                     <div className="text-xs md:text-sm font-medium text-gray-800">
-                      CO₂ Saved
+                      CO₂ Diselamatkan
                     </div>
                     <div className="text-sm md:text-base text-green-600 font-bold">
-                      1.2k tons
+                      1.2k ton
                     </div>
                   </div>
                 </div>
@@ -251,7 +248,7 @@ const HeroSection = () => {
                   <div className="text-base md:text-xl">🥗</div>
                   <div>
                     <div className="text-xs md:text-sm font-medium text-gray-800">
-                      Meals Saved
+                      Makanan Diselamatkan
                     </div>
                     <div className="text-sm md:text-base text-green-600 font-bold">
                       50k+

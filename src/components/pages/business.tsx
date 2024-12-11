@@ -16,53 +16,53 @@ const BusinessPage = () => {
   const benefits = [
     {
       icon: <Store className="w-6 h-6" />,
-      title: "Reach More Customers",
+      title: "Jangkau Lebih Banyak Pelanggan",
       description:
-        "Connect with conscious consumers looking for quality food at better prices",
+        "Terhubung dengan konsumen yang sedang mencari makanan berkualitas dengan harga lebih murah",
     },
     {
       icon: <TrendingUp className="w-6 h-6" />,
-      title: "Reduce Waste",
+      title: "Kurangi Limbah",
       description:
-        "Turn potential losses into revenue by selling items approaching expiry",
+        "Ubah potensi kerugian menjadi keuntungan dengan menjual barang yang mendekati kadaluarsa",
     },
     {
       icon: <Truck className="w-6 h-6" />,
-      title: "Efficient Management",
-      description: "Easy-to-use platform for managing inventory and orders",
+      title: "Manajemen Efisien",
+      description: "Platform yang mudah digunakan untuk mengelola stok dan pesanan",
     },
   ];
 
   const steps = [
     {
       number: "01",
-      title: "Register Your Business",
+      title: "Daftarkan Bisnis Anda",
       description:
-        "Complete our simple online registration form and verify your business",
+        "Lengkapi formulir pendaftaran online kami yang sederhana dan verifikasi bisnis Anda",
     },
     {
       number: "02",
-      title: "List Your Products",
-      description: "Add your products with photos, prices, and expiry dates",
+      title: "Daftarkan Produk Anda",
+      description: "Tambahkan produk Anda dengan foto, harga, dan tanggal kadaluarsa",
     },
     {
       number: "03",
-      title: "Start Selling",
+      title: "Mulai Menjual",
       description:
-        "Receive orders and manage your inventory through our platform",
+        "Terima pesanan dan kelola stok Anda melalui platform kami",
     },
   ];
 
   const faqs = [
     {
-      question: "How much does it cost to join?",
+      question: "Berapa biaya untuk bergabung?",
       answer:
-        "Registration is free. We only take a small commission on successful sales.",
+        "Pendaftaran gratis. Kami hanya mengambil komisi kecil dari penjualan yang berhasil.",
     },
     {
-      question: "What types of products can I sell?",
+      question: "Jenis produk apa yang bisa saya jual?",
       answer:
-        "Any food items including fresh produce, baked goods, prepared meals, and more.",
+        "Semua jenis makanan termasuk hasil bumi segar, roti, makanan siap saji, dan lainnya.",
     },
   ];
 
@@ -78,15 +78,14 @@ const BusinessPage = () => {
               className="md:w-1/2 space-y-6"
             >
               <div className="inline-block bg-green-100 text-green-600 px-4 py-2 rounded-full text-sm font-medium">
-                For Business Partners
+                Untuk Mitra Bisnis
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-gray-800 leading-tight">
-                Grow Your Business, <br />
-                <span className="text-green-600">Reduce Food Waste</span>
+                Kembangkan Bisnis Anda, <br />
+                <span className="text-green-600">Kurangi Limbah Makanan</span>
               </h1>
               <p className="text-lg text-gray-600">
-                Join WasteLess and turn your excess inventory into profit while
-                making a positive impact on the environment
+                Bergabunglah dengan WasteLess dan ubah inventaris berlebih Anda menjadi keuntungan sambil memberikan dampak positif pada lingkungan
               </p>
               <motion.button
                 onClick={() => router.push("/register")}
@@ -94,7 +93,7 @@ const BusinessPage = () => {
                 whileTap={{ scale: 0.98 }}
                 className="bg-green-600 text-white px-8 py-4 rounded-xl hover:bg-green-700 transition shadow-lg flex items-center gap-2"
               >
-                Get Started Now
+                Mulai Sekarang
                 <ArrowRight className="w-5 h-5" />
               </motion.button>
             </motion.div>
@@ -105,7 +104,7 @@ const BusinessPage = () => {
             >
               <Image
                 src="/hero-section.jpg"
-                alt="Business Partner"
+                alt="Mitra Bisnis"
                 width={600}
                 height={400}
                 className="rounded-2xl shadow-2xl"
@@ -121,10 +120,10 @@ const BusinessPage = () => {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
-              Why Partner with WasteLess?
+              Mengapa Bermitra dengan WasteLess?
             </h2>
             <p className="text-gray-600">
-              Join hundreds of businesses already benefiting from our platform
+              Bergabunglah dengan ratusan bisnis yang sudah mendapatkan manfaat dari platform kami
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -155,10 +154,10 @@ const BusinessPage = () => {
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
-              How to Get Started
+              Cara Memulai
             </h2>
             <p className="text-gray-600">
-              Simple steps to start selling on WasteLess
+              Langkah-langkah sederhana untuk mulai menjual di WasteLess
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -196,7 +195,7 @@ const BusinessPage = () => {
         <div className="container mx-auto px-4 max-w-4xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">
-              Frequently Asked Questions
+              Pertanyaan yang Sering Diajukan
             </h2>
           </div>
           <div className="space-y-6">
@@ -234,11 +233,10 @@ const BusinessPage = () => {
             className="max-w-3xl mx-auto space-y-6"
           >
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Ready to Get Started?
+              Siap untuk Memulai?
             </h2>
             <p className="text-green-100 mb-8">
-              Join our growing community of business partners and start making a
-              difference
+              Bergabunglah dengan komunitas mitra bisnis kami yang terus berkembang dan mulailah membuat perbedaan
             </p>
             <motion.button
               onClick={() => router.push("/register")}
@@ -246,7 +244,7 @@ const BusinessPage = () => {
               whileTap={{ scale: 0.98 }}
               className="bg-white text-green-600 px-8 py-4 rounded-xl hover:bg-green-50 transition shadow-lg inline-flex items-center gap-2"
             >
-              Register Now
+              Daftar Sekarang
               <ArrowRight className="w-5 h-5" />
             </motion.button>
           </motion.div>

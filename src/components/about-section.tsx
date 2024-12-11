@@ -1,30 +1,30 @@
 'use client';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import {  Star, Clock, ShoppingBag, Recycle } from 'lucide-react';
+import { Star, Clock, ShoppingBag, Recycle } from 'lucide-react';
 
 const AboutSection = () => {
   const features = [
     {
       icon: <ShoppingBag className="w-6 h-6 text-white" />,
-      title: "Reduce Food Waste",
-      description: "Help local F&B businesses reduce food waste while getting quality products at better prices.",
+      title: "Kurangi Limbah Makanan",
+      description: "Bantu bisnis F&B lokal mengurangi limbah makanan sambil mendapatkan produk berkualitas dengan harga lebih baik.",
       bgColor: "bg-green-600",
-      stats: "2.5M+ items saved"
+      stats: "2.5M+ item diselamatkan"
     },
     {
       icon: <Clock className="w-6 h-6 text-white" />,
-      title: "Smart Inventory",
-      description: "Efficient inventory management system for local businesses to track and manage their products.",
+      title: "Stok Cerdas",
+      description: "Sistem manajemen Stok yang efisien untuk bisnis lokal untuk melacak dan mengelola produk mereka.",
       bgColor: "bg-blue-600",
-      stats: "500+ businesses"
+      stats: "500+ bisnis"
     },
     {
       icon: <Recycle className="w-6 h-6 text-white" />,
-      title: "Digital Transformation",
-      description: "Supporting traditional SMEs in their journey towards digital transformation.",
+      title: "Transformasi Digital",
+      description: "Mendukung UKM tradisional dalam perjalanan mereka menuju transformasi digital.",
       bgColor: "bg-purple-600",
-      stats: "98% success rate"
+      stats: "98% tingkat keberhasilan"
     }
   ];
 
@@ -38,7 +38,7 @@ const AboutSection = () => {
             viewport={{ once: true }}
             className="text-green-600 font-medium mb-4 inline-block"
           >
-            ABOUT WASTELESS
+            TENTANG WASTELESS
           </motion.span>
           <motion.h2 
             initial={{ opacity: 0, y: -20 }}
@@ -46,7 +46,7 @@ const AboutSection = () => {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-4 md:mb-6"
           >
-            Transforming Food Waste into Opportunity
+            Mengubah Limbah Makanan Menjadi Peluang
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
@@ -54,7 +54,7 @@ const AboutSection = () => {
             viewport={{ once: true }}
             className="text-base md:text-lg text-gray-600"
           >
-            Join our mission to create a sustainable future while supporting local businesses
+            Bergabunglah dengan misi kami untuk menciptakan masa depan yang berkelanjutan sambil mendukung bisnis lokal
           </motion.p>
         </div>
 

@@ -5,10 +5,10 @@ import { Users, Leaf, Target, ArrowRight, Award, Clock, Building } from 'lucide-
 
 const AboutPage = () => {
   const stats = [
-    { number: '2.5M+', label: 'Food Items Saved', icon: <Leaf className="w-6 h-6 text-green-600" /> },
-    { number: '500+', label: 'Partner Businesses', icon: <Building className="w-6 h-6 text-green-600" /> },
-    { number: '10k+', label: 'Active Users', icon: <Users className="w-6 h-6 text-green-600" /> },
-    { number: '30%', label: 'Average Savings', icon: <Award className="w-6 h-6 text-green-600" /> }
+    { number: '2.5M+', label: 'Makanan Terselamatkan', icon: <Leaf className="w-6 h-6 text-green-600" /> },
+    { number: '500+', label: 'Bisnis Mitra', icon: <Building className="w-6 h-6 text-green-600" /> },
+    { number: '10k+', label: 'Pengguna Aktif', icon: <Users className="w-6 h-6 text-green-600" /> },
+    { number: '30%', label: 'Penghematan Rata-rata', icon: <Award className="w-6 h-6 text-green-600" /> }
   ];
 
   const partners = [
@@ -29,11 +29,11 @@ const AboutPage = () => {
             className="text-center max-w-4xl mx-auto"
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-800 mb-6">
-              Reducing Food Waste, <span className="text-green-600">Creating Impact</span>
+              Mengurangi Limbah Makanan, <span className="text-green-600">Menciptakan Peluang</span>
             </h1>
             <p className="text-lg md:text-xl text-gray-700 mb-12 leading-relaxed">
-              Since 2020, we&apos;ve been on a mission to transform how businesses handle food waste.
-              By connecting conscious consumers with local businesses, we&apos;re building a more sustainable future for everyone.
+              Sejak 2024, kami telah menjalankan misi untuk mengubah cara bisnis menangani limbah makanan.
+              Dengan menghubungkan konsumen yang sadar dengan bisnis lokal, kami membangun masa depan yang lebih berkelanjutan untuk semua orang.
             </p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
               {stats.map((stat, index) => (
@@ -64,19 +64,19 @@ const AboutPage = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
               >
-                <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Our Journey</h2>
+                <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Perjalanan Kami</h2>
                 <div className="space-y-6 text-gray-700">
                   <p className="leading-relaxed">
-                    WasteLess started with a simple observation: local businesses were throwing away 
-                    perfectly good food while many people were looking for affordable options.
+                    WasteLess dimulai dengan pengamatan sederhana: bisnis lokal membuang makanan yang masih layak 
+                    sementara banyak orang mencari opsi yang terjangkau.
                   </p>
                   <p className="leading-relaxed">
-                    We built a platform that connects these businesses with conscious consumers, 
-                    creating a win-win situation that reduces food waste and helps the environment.
+                    Kami membangun platform yang menghubungkan bisnis ini dengan konsumen yang sadar, 
+                    menciptakan situasi win-win yang mengurangi limbah makanan dan membantu lingkungan.
                   </p>
                   <p className="leading-relaxed">
-                    Today, we&apos;re proud to have saved millions of food items and partnered with 
-                    hundreds of businesses across the country.
+                    Hari ini, kami bangga telah menyelamatkan jutaan item makanan dan bermitra dengan 
+                    ratusan bisnis di seluruh negeri.
                   </p>
                 </div>
               </motion.div>
@@ -88,7 +88,7 @@ const AboutPage = () => {
               >
                 <Image
                   src="/hero-section.jpg"
-                  alt="Our Journey"
+                  alt="Perjalanan Kami"
                   width={600}
                   height={400}
                   className="rounded-2xl shadow-xl"
@@ -109,10 +109,10 @@ const AboutPage = () => {
             viewport={{ once: true }}
             className="text-center max-w-3xl mx-auto mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Our Values</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Nilai-Nilai Kami</h2>
             <p className="text-gray-700 leading-relaxed">
-              These core values guide everything we do as we work towards our mission 
-              of creating a more sustainable future.
+              Nilai-nilai inti ini membimbing segala sesuatu yang kami lakukan saat kami bekerja menuju misi kami 
+              untuk menciptakan masa depan yang lebih berkelanjutan.
             </p>
           </motion.div>
           <motion.div
@@ -124,18 +124,18 @@ const AboutPage = () => {
             {[
               {
                 icon: <Leaf className="w-8 h-8" />,
-                title: 'Environmental Impact',
-                description: 'Every action we take is measured by its positive impact on our planet.'
+                title: 'Dampak Lingkungan',
+                description: 'Setiap tindakan yang kami ambil diukur dengan dampak positifnya terhadap planet kita.'
               },
               {
                 icon: <Users className="w-8 h-8" />,
-                title: 'Community First',
-                description: 'We believe in building strong, lasting relationships with our partners and users.'
+                title: 'Komunitas Utama',
+                description: 'Kami percaya dalam membangun hubungan yang kuat dan langgeng dengan mitra dan pengguna kami.'
               },
               {
                 icon: <Target className="w-8 h-8" />,
-                title: 'Continuous Innovation',
-                description: 'We constantly evolve our technology to better serve our community.'
+                title: 'Inovasi Berkelanjutan',
+                description: 'Kami terus mengembangkan teknologi kami untuk melayani komunitas kami dengan lebih baik.'
               }
             ].map((value, index) => (
               <motion.div
@@ -166,8 +166,8 @@ const AboutPage = () => {
             viewport={{ once: true }}
             className="text-center mb-12"
           >
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Trusted By Industry Leaders</h2>
-            <p className="text-gray-600">We&apos;re proud to work with companies that share our vision</p>
+            <h2 className="text-3xl font-bold text-gray-800 mb-4">Dipercaya oleh Pemimpin Industri</h2>
+            <p className="text-gray-600">Kami bangga bekerja dengan perusahaan yang berbagi visi kami</p>
           </motion.div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center max-w-4xl mx-auto">
             {partners.map((partner, index) => (

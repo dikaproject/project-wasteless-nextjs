@@ -28,13 +28,13 @@ const ContactPage = () => {
       const data = await response.json();
 
       if (data.success) {
-        toast.success('Message sent successfully!');
+        toast.success('Pesan berhasil dikirim!');
         setFormData({ name: '', email: '', message: '' });
       } else {
         throw new Error(data.message);
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to send message');
+      toast.error(error instanceof Error ? error.message : 'Gagal mengirim pesan');
     } finally {
       setLoading(false);
     }
@@ -53,16 +53,16 @@ const ContactPage = () => {
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-              {/* Contact Form */}
+              {/* Formulir Kontak */}
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="bg-white p-8 rounded-2xl shadow-xl"
               >
-                <h2 className="text-3xl font-bold mb-6 text-gray-600">Get in Touch</h2>
+                <h2 className="text-3xl font-bold mb-6 text-gray-600">Hubungi Kami</h2>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Nama</label>
                     <input
                       type="text"
                       name="name"
@@ -70,7 +70,7 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-                      placeholder="Your name"
+                      placeholder="Nama Anda"
                     />
                   </div>
                   <div>
@@ -82,11 +82,11 @@ const ContactPage = () => {
                       onChange={handleChange}
                       required
                       className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-                      placeholder="your@email.com"
+                      placeholder="email@anda.com"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Pesan</label>
                     <textarea
                       name="message"
                       value={formData.message}
@@ -94,7 +94,7 @@ const ContactPage = () => {
                       required
                       rows={4}
                       className="w-full text-gray-800 px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
-                      placeholder="Your message..."
+                      placeholder="Pesan Anda..."
                     />
                   </div>
                   <motion.button
@@ -109,7 +109,7 @@ const ContactPage = () => {
                     ) : (
                       <>
                         <Send className="w-5 h-5" />
-                        Send Message
+                        Kirim Pesan
                       </>
                     )}
                   </motion.button>
@@ -117,14 +117,14 @@ const ContactPage = () => {
               </motion.div>
 
 
-              {/* Contact Information */}
+              {/* Informasi Kontak */}
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 className="space-y-8"
               >
                 <div>
-                  <h3 className="text-2xl font-bold mb-4 text-gray-600">Contact Information</h3>
+                  <h3 className="text-2xl font-bold mb-4 text-gray-600">Informasi Kontak</h3>
                   <div className="space-y-4">
                     {[
                       { icon: <Phone />, text: '+1 (555) 123-4567' },
@@ -148,11 +148,11 @@ const ContactPage = () => {
                 </div>
 
                 <div className="bg-green-50 p-8 rounded-2xl">
-                  <h3 className="text-xl font-bold mb-4 text-gray-600">Office Hours</h3>
+                  <h3 className="text-xl font-bold mb-4 text-gray-600">Jam Kerja</h3>
                   <div className="space-y-2 text-gray-600">
-                    <p>Monday - Friday: 9:00 AM - 6:00 PM</p>
-                    <p>Saturday: 10:00 AM - 4:00 PM</p>
-                    <p>Sunday: Closed</p>
+                    <p>Senin - Jumat: 9:00 AM - 6:00 PM</p>
+                    <p>Sabtu: 10:00 AM - 4:00 PM</p>
+                    <p>Minggu: Tutup</p>
                   </div>
                 </div>
               </motion.div>

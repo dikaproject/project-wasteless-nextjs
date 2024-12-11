@@ -32,17 +32,17 @@ export default function SideNav() {
       path: "/seller",
     },
     {
-      title: "Products",
+      title: "Produk",
       icon: <Package className="w-5 h-5" />,
       path: "/seller/products",
     },
     {
-      title: "Orders",
+      title: "Order",
       icon: <ClipboardList className="w-5 h-5" />,
       path: "/seller/orders",
     },
     {
-      title: "Back To Home",
+      title: "Beranda",
       icon: <Home className="w-5 h-5" />,
       path: "/",
     }
