@@ -130,8 +130,8 @@ Endpoints for creating, viewing, and managing orders.
 ---
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
-API Wilayah Indonesia [API](https://github.com/emsifa/api-wilayah-indonesia.git)
+- This project is licensed under the [MIT License](LICENSE).
+- API Wilayah Indonesia [API](https://github.com/emsifa/api-wilayah-indonesia.git)
 ---
 
 Made with 💚 for a sustainable future.
