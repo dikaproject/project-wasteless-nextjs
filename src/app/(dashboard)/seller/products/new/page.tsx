@@ -442,46 +442,49 @@ export default function NewProduct() {
 
           {/* Image Upload */}
           <div
-            className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl transition-colors duration-200 
-      ${
-        imagePreview ? "border-green-500 bg-green-50" : "hover:border-gray-400"
-      }`}
-            onDragOver={(e) => e.preventDefault()}
-            onDrop={handleDrop}
-          >
-            <div className="space-y-2 text-center">
-              {imagePreview ? (
-                <div className="relative group">
-                  <div className="relative w-64 h-64 overflow-hidden rounded-xl">
-                    <Image
-                      src={imagePreview}
-                      alt="Product Image"
-                      layout="fill"
-                      objectFit="cover"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setImagePreview(null)}
-                    className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-lg group-hover:block"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                </div>
-              ) : (
-                <div className="flex flex-col items-center text-gray-600">
-                  <Upload className="w-12 h-12" />
-                  <p className="text-sm">Drag and drop or click to upload</p>
-                </div>
-              )}
-            </div>
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleImageChange}
-              className="sr-only"
-            />
-          </div>
+  className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-xl transition-colors duration-200 cursor-pointer
+    ${imagePreview ? "border-green-500 bg-green-50" : "hover:border-gray-400"}`}
+  onDragOver={(e) => e.preventDefault()}
+  onDrop={handleDrop}
+  onClick={() => fileInputRef.current?.click()} // Add this line
+>
+  <div className="space-y-2 text-center">
+    {imagePreview ? (
+      <div className="relative group">
+        <div className="relative w-64 h-64 overflow-hidden rounded-xl">
+          <Image
+            src={imagePreview}
+            alt="Product Image"
+            layout="fill"
+            objectFit="cover"
+          />
+        </div>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation(); // Add this to prevent triggering parent onClick
+            setImagePreview(null);
+          }}
+          className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-lg group-hover:block"
+        >
+          <X className="w-5 h-5 text-gray-700" />
+        </button>
+      </div>
+    ) : (
+      <div className="flex flex-col items-center text-gray-600">
+        <Upload className="w-12 h-12" />
+        <p className="text-sm">Drag and drop or click to upload</p>
+      </div>
+    )}
+  </div>
+  <input
+    type="file"
+    ref={fileInputRef}
+    onChange={handleImageChange}
+    accept="image/*" // Add accepted file types
+    className="sr-only"
+  />
+</div>
 
           {/* Discount Checkbox */}
           <div className="flex items-center">

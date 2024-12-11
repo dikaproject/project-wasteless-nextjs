@@ -22,6 +22,7 @@ export default function SellerApplications() {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
   const [selectedSellerId, setSelectedSellerId] = useState<number | null>(null);
+  const [approvingId, setApprovingId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchPendingSellers();
@@ -87,6 +88,7 @@ export default function SellerApplications() {
 
   const handleApprove = async (id: number) => {
     try {
+      setApprovingId(id); // Set loading state
       const token = localStorage.getItem("token");
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/admin/approve-seller/${id}`,
@@ -94,17 +96,27 @@ export default function SellerApplications() {
           method: "PUT",
           headers: {
             Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
           },
         }
       );
 
       const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to approve seller");
+      }
+
       if (data.success) {
         toast.success("Seller approved successfully");
         fetchPendingSellers();
       }
     } catch (err) {
-      toast.error("Failed to approve seller");
+      console.error("Approve error:", err);
+      toast.error(
+        err instanceof Error ? err.message : "Failed to approve seller"
+      );
+    } finally {
+      setApprovingId(null); // Reset loading state
     }
   };
 
@@ -139,7 +151,7 @@ export default function SellerApplications() {
                 <div>
                   <p className="text-sm text-gray-500 mb-2">KTP</p>
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${seller.photo_ktp}`}
+                    src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/ktp/${seller.photo_ktp}`}
                     alt="KTP"
                     width={150}
                     height={100}
@@ -149,7 +161,7 @@ export default function SellerApplications() {
                 <div>
                   <p className="text-sm text-gray-500 mb-2">Business Photo</p>
                   <Image
-                    src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/${seller.photo_usaha}`}
+                    src={`${process.env.NEXT_PUBLIC_API_URL}/uploads/usaha/${seller.photo_usaha}`}
                     alt="Business"
                     width={150}
                     height={100}
@@ -161,9 +173,20 @@ export default function SellerApplications() {
               <div className="flex justify-end space-x-2">
                 <button
                   onClick={() => handleApprove(seller.id)}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                  disabled={approvingId === seller.id}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 flex items-center gap-2"
                 >
-                  Approve
+                  {approvingId === seller.id ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Approving...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" />
+                      Approve
+                    </>
+                  )}
                 </button>
                 <button
                   onClick={() => {
@@ -183,7 +206,7 @@ export default function SellerApplications() {
         {showRejectModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
             <div className="bg-white rounded-xl max-w-md w-full p-6">
-              <h3 className="text-lg font-medium mb-4">
+              <h3 className="text-lg font-medium text-gray-700 mb-4">
                 Reject Seller Application
               </h3>
               <textarea

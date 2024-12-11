@@ -141,7 +141,7 @@ export default function EditProduct() {
       formDataToSend.append("quantity", formData.quantity);
       formDataToSend.append("massa", formData.massa);
       formDataToSend.append("expired", formData.expired);
-      formDataToSend.append("is_active", String(formData.is_active));
+      formDataToSend.append("is_active", formData.is_active ? "1" : "0");
 
       // Add photo if changed
       if (formData.photo) {
@@ -238,7 +238,14 @@ export default function EditProduct() {
     }
   };
 
-  if (loading) return <div className="text-gray-600">Loading...</div>;
+  const LoadingState = () => (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-green-500"></div>
+    </div>
+  );
+  
+  // Update loading return in EditProduct
+  if (loading) return <LoadingState />;
 
   return (
     <div className="p-6">

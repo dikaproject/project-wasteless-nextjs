@@ -1,8 +1,7 @@
-// components/auth/RegisterForm.tsx
 "use client";
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Eye, EyeOff, Mail, Lock, User, Loader, Phone, Image } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Eye, EyeOff, Mail, Lock, User, Loader, Phone } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
@@ -13,9 +12,6 @@ interface RegisterFormData {
   password: string;
   confirmPassword: string;
   phone: string;
-  role: 'user' | 'seller';
-  photo_ktp: File | null;
-  photo_usaha: File | null;
 }
 
 const RegisterForm = () => {
@@ -27,74 +23,30 @@ const RegisterForm = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    phone: '',
-    role: 'user',
-    photo_ktp: null,
-    photo_usaha: null
+    phone: ''
   });
-  const [photoKtpPreview, setPhotoKtpPreview] = useState<string | null>(null);
-  const [photoUsahaPreview, setPhotoUsahaPreview] = useState<string | null>(null);
-
-  const handleFileChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    name: 'photo_ktp' | 'photo_usaha'
-  ) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFormData(prev => ({
-        ...prev,
-        [name]: file
-      }));
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        if (name === 'photo_ktp') {
-          setPhotoKtpPreview(reader.result as string);
-        } else {
-          setPhotoUsahaPreview(reader.result as string);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const validateForm = () => {
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       toast.error('Please enter a valid email address');
       return false;
     }
 
-    // Phone validation
     const phoneRegex = /^[0-9]{10,13}$/;
     if (!phoneRegex.test(formData.phone)) {
       toast.error('Please enter a valid phone number');
       return false;
     }
 
-    // Password validation
     if (formData.password.length < 6) {
       toast.error('Password must be at least 6 characters');
       return false;
     }
 
-    // Password confirmation
     if (formData.password !== formData.confirmPassword) {
       toast.error('Passwords do not match');
       return false;
-    }
-
-    // Additional validation for seller
-    if (formData.role === 'seller') {
-      if (!formData.photo_ktp) {
-        toast.error('Please upload Photo KTP');
-        return false;
-      }
-      if (!formData.photo_usaha) {
-        toast.error('Please upload Photo Usaha');
-        return false;
-      }
     }
 
     return true;
@@ -110,35 +62,24 @@ const RegisterForm = () => {
     setIsLoading(true);
 
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('name', formData.name);
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('password', formData.password);
-      formDataToSend.append('phone', formData.phone);
-      formDataToSend.append('role', formData.role);
-
-      if (formData.role === 'seller') {
-        if (formData.photo_ktp) {
-          formDataToSend.append('photo_ktp', formData.photo_ktp);
-        }
-        if (formData.photo_usaha) {
-          formDataToSend.append('photo_usaha', formData.photo_usaha);
-        }
-      }
-
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
         method: 'POST',
-        body: formDataToSend
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          phone: formData.phone,
+          role: 'user'
+        })
       });
 
       const data = await response.json();
 
       if (data.success) {
-        toast.success(
-          formData.role === 'seller'
-            ? 'Registration successful! Please wait for admin approval.'
-            : 'Registration successful!'
-        );
+        toast.success('Registration successful!');
         router.push('/login');
       } else {
         toast.error(data.message || 'Registration failed');
@@ -151,7 +92,7 @@ const RegisterForm = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
       ...prev,
       [e.target.name]: e.target.value
@@ -175,9 +116,8 @@ const RegisterForm = () => {
           </p>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit} encType="multipart/form-data">
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
-            {/* Name Input */}
             <div className="relative">
               <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -192,7 +132,6 @@ const RegisterForm = () => {
               />
             </div>
 
-            {/* Email Input */}
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -207,7 +146,6 @@ const RegisterForm = () => {
               />
             </div>
 
-            {/* Phone Input */}
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -222,20 +160,6 @@ const RegisterForm = () => {
               />
             </div>
 
-            {/* Role Selection */}
-            <div className="relative">
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="w-full pl-4 text-gray-600 pr-10 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white"
-              >
-                <option value="user">Customer</option>
-                <option value="seller">Seller</option>
-              </select>
-            </div>
-
-            {/* Password Fields */}
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -270,76 +194,6 @@ const RegisterForm = () => {
                 placeholder="Confirm password"
               />
             </div>
-
-            {/* Conditional Fields for Seller */}
-            <AnimatePresence>
-              {formData.role === 'seller' && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3, ease: "easeInOut" }}
-                  className="overflow-hidden"
-                >
-                  {/* Photo KTP */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                  >
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Upload Photo KTP
-                    </label>
-                    <div className="flex items-center">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, 'photo_ktp')}
-                        className="w-full text-gray-600 py-2"
-                      />
-                    </div>
-                    {photoKtpPreview && (
-                      <motion.img
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        src={photoKtpPreview}
-                        alt="Photo KTP Preview"
-                        className="mt-2 w-full h-48 object-cover rounded-lg shadow-md"
-                      />
-                    )}
-                  </motion.div>
-
-                  {/* Photo Usaha */}
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="mt-4"
-                  >
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Upload Photo Usaha
-                    </label>
-                    <div className="flex items-center">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileChange(e, 'photo_usaha')}
-                        className="w-full text-gray-600 py-2"
-                      />
-                    </div>
-                    {photoUsahaPreview && (
-                      <motion.img
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        src={photoUsahaPreview}
-                        alt="Photo Usaha Preview"
-                        className="mt-2 w-full h-48 object-cover rounded-lg shadow-md"
-                      />
-                    )}
-                  </motion.div>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </div>
 
           <motion.button
@@ -358,6 +212,13 @@ const RegisterForm = () => {
               'Create account'
             )}
           </motion.button>
+
+          <p className="text-center text-sm text-gray-600">
+            Want to become a seller?{' '}
+            <Link href="/seller/register" className="text-green-600 hover:text-green-500 font-medium">
+              Register as seller
+            </Link>
+          </p>
         </form>
       </motion.div>
     </div>

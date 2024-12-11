@@ -14,6 +14,7 @@ import {
   Home
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import Image from "next/image";
 
 export default function SideNav() {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -103,9 +104,15 @@ export default function SideNav() {
         <div className="flex flex-col h-full">
           <div className="p-5 flex items-center justify-between border-b border-gray-100">
             <Link href="/seller" className="flex items-center gap-3">
-              <div className="w-9 h-9 bg-green-600 rounded-xl flex items-center justify-center shadow-lg shadow-green-200">
-                <span className="text-white font-bold text-lg">W</span>
-              </div>
+            <div className="bg-white p-1 rounded-lg">
+      <Image 
+        src="/images/logo.png"
+        alt="WasteLess Logo"
+        width={36}
+        height={36}
+        className="object-contain"
+      />
+    </div>
               <AnimatePresence mode="wait">
                 {!isCollapsed && (
                   <motion.span
