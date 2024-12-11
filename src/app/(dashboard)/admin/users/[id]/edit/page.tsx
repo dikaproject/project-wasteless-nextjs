@@ -102,7 +102,7 @@ export default function EditUser() {
 
       <div className="bg-white rounded-xl shadow-lg p-6">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Edit User</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 text-gray-700">
           <div>
             <label htmlFor="name" className="block text-gray-600">
               Name

@@ -62,22 +62,27 @@ export default function CartPage() {
   const calculateTotals = () => {
     let subtotal = 0;
     let discount = 0;
-
+  
     cartItems.forEach((item) => {
       const itemPrice = item.is_discount
         ? item.discount_price || item.price
         : item.price;
       const originalTotal = item.price * item.quantity;
       const discountedTotal = itemPrice * item.quantity;
-
+  
       subtotal += originalTotal;
       discount += originalTotal - discountedTotal;
     });
-
-    return { subtotal, discount, total: subtotal - discount };
+  
+    // Calculate PPN (0.7%)
+    const ppn = Math.round((subtotal - discount) * 0.007);
+    const total = subtotal - discount + ppn;
+  
+    return { subtotal, discount, ppn, total };
   };
-
-  const { subtotal, discount, total } = calculateTotals();
+  
+  // Update JSX to display PPN
+  const { subtotal, discount, ppn, total } = calculateTotals();
 
   const updateQuantity = async (productId: number, quantity: number) => {
     try {
@@ -143,10 +148,13 @@ export default function CartPage() {
     }
   };
 
+  
+
   const totalAmount = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+  
 
   if (loading) {
     return (
@@ -191,7 +199,7 @@ export default function CartPage() {
           ) : (
             <div className="space-y-6">
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-                <div className="divide-y divide-gray-200">
+                <div className="divide-y text-gray-700 divide-gray-200">
                   {cartItems.map((item) => (
                     <CartItem
                       key={item.id}
@@ -222,7 +230,7 @@ export default function CartPage() {
 
                   <div className="flex justify-between text-base text-gray-600">
                     <span>PPN (0,7%)</span>
-                    <span>Free</span>
+                    <span>Rp {ppn.toLocaleString()}</span>
                   </div>
 
                   <div className="pt-4 border-t border-gray-200">

@@ -84,7 +84,7 @@ interface CartItemProps {
           )}
         </div>
 
-        <div className="mt-4 flex items-center gap-4">
+        <div className="mt-4 flex items-center text-gray-800 gap-4">
           <div className="flex items-center bg-white rounded-lg shadow-sm border">
             <button
               onClick={() => handleUpdateQuantity(Math.max(1, quantity - 1))}

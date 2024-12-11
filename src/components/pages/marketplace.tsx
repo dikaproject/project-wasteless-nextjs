@@ -82,17 +82,17 @@ const MarketplacePage = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("Semua");
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedSort, setSelectedSort] = useState("Terbaru");
+  const [selectedSort, setSelectedSort] = useState("Latest");
   const [searchQuery, setSearchQuery] = useState("");
   const { isAuthenticated } = useAuth();
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [priceRange, setPriceRange] = useState({
     min: 0,
-    max: 10000000, // 10 juta IDR
+    max: 10000000, // 10 million IDR
   });
   const [showExpired, setShowExpired] = useState(false);
   const [onlyDiscounted, setOnlyDiscounted] = useState(false);
@@ -123,13 +123,13 @@ const MarketplacePage = () => {
           setCategories(data.data);
         }
       } catch (error) {
-        console.error("Gagal mengambil kategori:", error);
+        console.error("Failed to fetch categories:", error);
       }
     };
 
     fetchCategories();
   }, []);
-  const sortOptions = ["Terbaru", "Harga: Rendah ke Tinggi", "Harga: Tinggi ke Rendah"];
+  const sortOptions = ["Latest", "Price: Low to High", "Price: High to Low"];
 
   useEffect(() => {
     fetchProducts();
@@ -141,7 +141,7 @@ const MarketplacePage = () => {
       const params = new URLSearchParams({
         page: currentPage.toString(),
         limit: "12",
-        category: selectedCategory !== "Semua" ? selectedCategory : "",
+        category: selectedCategory !== "All" ? selectedCategory : "",
         province: selectedProvince || "",
         kabupaten: selectedRegency || "",
         kecamatan: selectedDistrict || "",
@@ -150,11 +150,11 @@ const MarketplacePage = () => {
         showExpired: showExpired.toString(),
         onlyDiscounted: onlyDiscounted.toString(),
         sort:
-          selectedSort === "Harga: Rendah ke Tinggi"
+          selectedSort === "Price: Low to High"
             ? "price_asc"
-            : selectedSort === "Harga: Tinggi ke Rendah"
-              ? "price_desc"
-              : "latest",
+            : selectedSort === "Price: High to Low"
+            ? "price_desc"
+            : "latest",
       });
 
       const response = await fetch(
@@ -169,11 +169,23 @@ const MarketplacePage = () => {
         throw new Error(data.message);
       }
     } catch (err) {
-      setError("Gagal memuat produk");
-      toast.error("Gagal memuat produk");
+      setError("Failed to load products");
+      toast.error("Failed to load products");
     } finally {
       setLoading(false);
     }
+  };
+
+  const isDiscountActive = (product: Product) => {
+    if (!product.is_discount || !product.start_date || !product.end_date) {
+      return false;
+    }
+
+    const now = new Date();
+    const startDate = new Date(product.start_date);
+    const endDate = new Date(product.end_date);
+
+    return now >= startDate && now <= endDate;
   };
 
   useEffect(() => {
@@ -183,7 +195,7 @@ const MarketplacePage = () => {
         const data = await response.json();
         setProvinces(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("Gagal mengambil provinsi:", error);
+        console.error("Failed to fetch provinces:", error);
         setProvinces([]);
       }
     };
@@ -203,7 +215,7 @@ const MarketplacePage = () => {
         const data = await response.json();
         setRegencies(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("Gagal mengambil kabupaten:", error);
+        console.error("Failed to fetch regencies:", error);
         setRegencies([]);
       }
     };
@@ -223,7 +235,7 @@ const MarketplacePage = () => {
         const data = await response.json();
         setDistricts(Array.isArray(data) ? data : []);
       } catch (error) {
-        console.error("Gagal mengambil kecamatan:", error);
+        console.error("Failed to fetch districts:", error);
         setDistricts([]);
       }
     };
@@ -249,7 +261,7 @@ const MarketplacePage = () => {
     try {
       const token = localStorage.getItem("token");
       if (!isAuthenticated || !token) {
-        toast.error("Silakan login terlebih dahulu");
+        toast.error("Please login first");
         return;
       }
 
@@ -271,16 +283,16 @@ const MarketplacePage = () => {
       console.log("Response:", data); // Debug response
 
       if (!response.ok) {
-        throw new Error(data.message || "Gagal menambahkan ke keranjang");
+        throw new Error(data.message || "Failed to add to cart");
       }
 
       if (data.success) {
-        toast.success("Produk berhasil ditambahkan ke keranjang");
+        toast.success("Product added to cart");
       }
     } catch (err) {
-      console.error("Kesalahan menambahkan ke keranjang:", err);
+      console.error("Add to cart error:", err);
       toast.error(
-        err instanceof Error ? err.message : "Gagal menambahkan produk ke keranjang"
+        err instanceof Error ? err.message : "Failed to add product to cart"
       );
     }
   };
@@ -326,13 +338,19 @@ const MarketplacePage = () => {
               <div className="text-right">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="text-2xl font-bold text-green-600">
-                    {formatPrice(product.discount_price || product.price)}
+                    {formatPrice(
+                      isDiscountActive(product)
+                        ? Number(product.discount_price) ||
+                            Number(product.price)
+                        : Number(product.price)
+                    )}
                   </span>
-                  {product.is_discount &&
+                  {isDiscountActive(product) &&
+                    product.is_discount &&
                     product.discount_percentage &&
                     product.discount_percentage > 0 && (
                       <span className="text-sm text-gray-400 line-through">
-                        {formatPrice(product.price)}
+                        {formatPrice(Number(product.price))}
                       </span>
                     )}
                 </div>
@@ -341,31 +359,31 @@ const MarketplacePage = () => {
 
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-500">Penjual</span>
+                <span className="text-gray-500">Seller</span>
                 <p className="font-medium text-gray-900">
                   {product.seller_name}
                 </p>
               </div>
               <div>
-                <span className="text-gray-500">Lokasi</span>
+                <span className="text-gray-500">Location</span>
                 <p className="font-medium text-gray-900">
                   {product.kecamatan}, {product.kabupaten}
                 </p>
               </div>
               <div>
-                <span className="text-gray-500">Stok</span>
+                <span className="text-gray-500">Stock</span>
                 <p className="font-medium text-gray-900">
-                  {product.quantity} item
+                  {product.quantity} items
                 </p>
               </div>
               <div>
-                <span className="text-gray-500">Berat</span>
+                <span className="text-gray-500">Weight</span>
                 <p className="font-medium text-gray-900">
-                  {product.massa} gram
+                  {product.massa} grams
                 </p>
               </div>
               <div>
-                <span className="text-gray-500">Kadaluarsa pada</span>
+                <span className="text-gray-500">Expires on</span>
                 <p className="font-medium text-gray-900">
                   {format(new Date(product.expired), "dd MMM yyyy")}
                 </p>
@@ -373,21 +391,47 @@ const MarketplacePage = () => {
               {product.is_discount &&
                 product.discount_percentage &&
                 product.discount_percentage > 0 && (
-                  <div>
-                    <span className="text-gray-500">Diskon</span>
-                    <p className="font-medium text-red-500">
-                      {product.discount_percentage}% OFF
-                    </p>
+                  <div className="col-span-2 bg-red-50 p-4 rounded-lg">
+                    <span className="text-gray-700 font-medium">
+                      Discount Period
+                    </span>
+                    <div className="mt-2 space-y-1">
+                      <p className="text-red-600 font-medium">
+                        {product.discount_percentage}% OFF
+                      </p>
+                      {isDiscountActive(product) ? (
+                        <>
+                          <p className="text-sm text-gray-600">
+                            Valid until:{" "}
+                            {format(new Date(product.end_date!), "dd MMM yyyy")}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-sm text-gray-600">
+                          {new Date(product.start_date!) > new Date()
+                            ? `Starts from: ${format(
+                                new Date(product.start_date!),
+                                "dd MMM yyyy"
+                              )}`
+                            : `Ended on: ${format(
+                                new Date(product.end_date!),
+                                "dd MMM yyyy"
+                              )}`}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 )}
-              <div className="col-span-2"> {/* Make address take full width */}
-                <span className="text-gray-500">Lokasi Pengambilan</span>
+              <div className="col-span-2">
+                {" "}
+                {/* Make address take full width */}
+                <span className="text-gray-500">Pickup Location</span>
                 <div className="mt-1">
                   <p className="font-medium text-gray-900">
                     {product.seller_name}
                   </p>
                   <p className="text-gray-600">
-                    {product.address} {/* Tambahkan alamat lengkap */}
+                    {product.address} {/* Add detailed address */}
                   </p>
                   <p className="text-gray-500 text-sm">
                     {product.kecamatan}, {product.kabupaten}, {product.province}
@@ -402,13 +446,14 @@ const MarketplacePage = () => {
                 onClose();
               }}
               disabled={product.quantity === 0}
-              className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 mt-6 ${product.quantity === 0
+              className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 mt-6 ${
+                product.quantity === 0
                   ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                   : "bg-green-600 text-white hover:bg-green-700"
-                } transition-colors`}
+              } transition-colors`}
             >
               <ShoppingBag className="w-5 h-5" />
-              {product.quantity === 0 ? "Stok Habis" : "Tambah ke Keranjang"}
+              {product.quantity === 0 ? "Out of Stock" : "Add to Cart"}
             </button>
           </div>
         </motion.div>
@@ -421,7 +466,7 @@ const MarketplacePage = () => {
     .filter((product) => {
       // Category filter
       if (
-        selectedCategory !== "Semua" &&
+        selectedCategory !== "All" &&
         product.category_name !== selectedCategory
       ) {
         return false;
@@ -459,11 +504,11 @@ const MarketplacePage = () => {
     })
     .sort((a, b) => {
       switch (selectedSort) {
-        case "Harga: Rendah ke Tinggi":
+        case "Price: Low to High":
           return (a.discount_price || a.price) - (b.discount_price || b.price);
-        case "Harga: Tinggi ke Rendah":
+        case "Price: High to Low":
           return (b.discount_price || b.price) - (a.discount_price || a.price);
-        default: // Terbaru
+        default: // Latest
           return new Date(b.expired).getTime() - new Date(a.expired).getTime();
       }
     });
@@ -480,7 +525,7 @@ const MarketplacePage = () => {
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center">
-        Memuat...
+        Loading...
       </div>
     );
 
@@ -491,9 +536,9 @@ const MarketplacePage = () => {
         <div className="container mx-auto px-4 py-8">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Produk</h1>
+              <h1 className="text-3xl font-bold text-gray-800">Marketplace</h1>
               <p className="text-gray-600 mt-2">
-                Temukan penawaran hebat pada produk makanan berkualitas
+                Find great deals on quality food items
               </p>
             </div>
 
@@ -502,7 +547,7 @@ const MarketplacePage = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Cari produk..."
+                placeholder="Search products..."
                 className="w-full pl-10 text-gray-700 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white/80 backdrop-blur-sm"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -515,20 +560,21 @@ const MarketplacePage = () => {
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Enhanced Filters Sidebar */}
           <motion.div
-            className={`lg:w-72 bg-white p-6 rounded-2xl shadow-lg ${isFilterOpen ? "block" : "hidden lg:block"
-              }`}
+            className={`lg:w-72 bg-white p-6 rounded-2xl shadow-lg ${
+              isFilterOpen ? "block" : "hidden lg:block"
+            }`}
           >
             <div className="space-y-8">
               {/* Categories with icons */}
               <div>
-                <h3 className="font-semibold mb-4 text-gray-800">Kategori</h3>
+                <h3 className="font-semibold mb-4 text-gray-800">Categories</h3>
                 <div className="text-gray-600">
                   <select
                     value={selectedCategory}
                     onChange={(e) => setSelectedCategory(e.target.value)}
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   >
-                    <option value="Semua">Semua Kategori</option>
+                    <option value="All">All Categories</option>
                     {categories.map((category) => (
                       <option key={category.id} value={category.name}>
                         {category.name}
@@ -607,6 +653,33 @@ const MarketplacePage = () => {
                 </div>
               </div>
 
+              {/* Enhanced Price Range */}
+              <div>
+                <h3 className="font-semibold mb-4 text-gray-800">
+                  Price Range
+                </h3>
+                <div className="space-y-4 text-gray-600">
+                  <input
+                    type="range"
+                    className="w-full"
+                    min="0"
+                    max="10000000"
+                    step="100000"
+                    value={priceRange.max}
+                    onChange={(e) =>
+                      setPriceRange((prev) => ({
+                        ...prev,
+                        max: parseInt(e.target.value),
+                      }))
+                    }
+                  />
+                  <div className="flex justify-between text-sm">
+                    <span>{formatPrice(0)}</span>
+                    <span>{formatPrice(priceRange.max)}</span>
+                  </div>
+                </div>
+              </div>
+
               {/* Modern Checkboxes */}
               <div>
                 <h3 className="font-semibold mb-4 text-gray-700">Filters</h3>
@@ -618,7 +691,7 @@ const MarketplacePage = () => {
                       onChange={(e) => setShowExpired(e.target.checked)}
                       className="form-checkbox text-green-600"
                     />
-                    <span>Expired Product</span>
+                    <span>Show expired items</span>
                   </label>
                   <label className="flex items-center gap-3">
                     <input
@@ -627,7 +700,7 @@ const MarketplacePage = () => {
                       onChange={(e) => setOnlyDiscounted(e.target.checked)}
                       className="form-checkbox text-green-600"
                     />
-                    <span>Discount</span>
+                    <span>Only discounted</span>
                   </label>
                 </div>
               </div>
@@ -651,10 +724,11 @@ const MarketplacePage = () => {
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
                 >
-                  <span>Filter: {selectedSort}</span>
+                  <span>Sort by: {selectedSort}</span>
                   <ChevronDown
-                    className={`w-5 h-5 transition-transform ${isDropdownOpen ? "rotate-180" : ""
-                      }`}
+                    className={`w-5 h-5 transition-transform ${
+                      isDropdownOpen ? "rotate-180" : ""
+                    }`}
                   />
                 </button>
 
@@ -673,10 +747,11 @@ const MarketplacePage = () => {
                             setSelectedSort(option);
                             setIsDropdownOpen(false);
                           }}
-                          className={`w-full text-left px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors ${selectedSort === option
+                          className={`w-full text-left px-4 py-2 text-gray-700 hover:bg-green-50 hover:text-green-600 transition-colors ${
+                            selectedSort === option
                               ? "bg-green-50 text-green-600"
                               : ""
-                            }`}
+                          }`}
                         >
                           {option}
                         </button>
@@ -708,7 +783,8 @@ const MarketplacePage = () => {
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       />
                     </div>
-                    {product.is_discount &&
+                    {isDiscountActive(product) &&
+                      product.is_discount &&
                       product.discount_percentage &&
                       product.discount_percentage > 0 && (
                         <span className="absolute top-4 right-4 bg-red-500 text-white px-2 py-1 rounded-lg text-sm font-medium">
@@ -730,25 +806,21 @@ const MarketplacePage = () => {
                     <h3 className="font-semibold text-gray-800 mb-2 group-hover:text-green-600 transition-colors">
                       {product.name}
                     </h3>
-
                     <div className="flex items-center gap-2 mb-4">
                       <span className="text-2xl font-bold text-green-600">
-                        {new Intl.NumberFormat("id-ID", {
-                          style: "currency",
-                          currency: "IDR",
-                          minimumFractionDigits: 0,
-                          maximumFractionDigits: 0,
-                        }).format(product.discount_price || product.price)}
+                        {formatPrice(
+                          isDiscountActive(product)
+                            ? Number(product.discount_price) ||
+                                Number(product.price)
+                            : Number(product.price)
+                        )}
                       </span>
-                      {product.is_discount &&
-                        product.discount_percentage && product.discount_percentage > 0 && (
+                      {isDiscountActive(product) &&
+                        product.is_discount &&
+                        product.discount_percentage &&
+                        product.discount_percentage > 0 && (
                           <span className="text-sm text-gray-400 line-through">
-                            {new Intl.NumberFormat("id-ID", {
-                              style: "currency",
-                              currency: "IDR",
-                              minimumFractionDigits: 0,
-                              maximumFractionDigits: 0,
-                            }).format(product.price)}
+                            {formatPrice(Number(product.price))}
                           </span>
                         )}
                     </div>
@@ -770,13 +842,14 @@ const MarketplacePage = () => {
                     <button
                       onClick={() => addToCart(product.id)}
                       disabled={product.quantity === 0}
-                      className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 ${product.quantity === 0
+                      className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 ${
+                        product.quantity === 0
                           ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                           : "bg-green-600 text-white hover:bg-green-700"
-                        } transition-colors`}
+                      } transition-colors`}
                     >
                       <ShoppingBag className="w-5 h-5" />
-                      {product.quantity === 0 ? "Stok Habis" : "Masukkan Keranjang"}
+                      {product.quantity === 0 ? "Out of Stock" : "Add to Cart"}
                     </button>
                   </div>
                 </motion.div>
@@ -797,10 +870,11 @@ const MarketplacePage = () => {
                   <button
                     key={page}
                     onClick={() => setCurrentPage(page)}
-                    className={`px-4 py-2 rounded ${currentPage === page
+                    className={`px-4 py-2 rounded ${
+                      currentPage === page
                         ? "bg-green-600 text-white"
                         : "bg-white text-gray-600 hover:bg-green-50"
-                      }`}
+                    }`}
                   >
                     {page}
                   </button>

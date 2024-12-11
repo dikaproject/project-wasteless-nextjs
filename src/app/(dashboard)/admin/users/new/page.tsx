@@ -73,7 +73,7 @@ export default function NewUser() {
 
       <div className="bg-white rounded-xl shadow-lg p-6">
         <h1 className="text-2xl text-gray-600 font-bold mb-6">New User</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 text-gray-700">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-gray-700">
               Name
