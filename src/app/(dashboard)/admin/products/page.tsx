@@ -66,14 +66,17 @@ export default function ModernProductsPage() {
         }
       );
 
+      const data = await response.json();
+
       if (response.ok) {
-        toast.success("Product deleted successfully");
-        fetchProducts();
+        toast.success(data.message || "Product deleted successfully");
+        fetchProducts(); // Refresh the products list
       } else {
-        throw new Error("Failed to delete product");
+        throw new Error(data.message || "Failed to delete product");
       }
     } catch (error) {
-      toast.error("Failed to delete product");
+      console.error('Delete error:', error);
+      toast.error(error instanceof Error ? error.message : "Failed to delete product");
     } finally {
       setDeleteModalOpen(false);
       setProductToDelete(null);
@@ -308,40 +311,43 @@ export default function ModernProductsPage() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60]"
               onClick={() => setDeleteModalOpen(false)}
             />
             <motion.div
-              initial={{ opacity: 0, scale: 0.75 }}
+              initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.75 }}
-              transition={{ type: "spring", duration: 0.5 }}
-              className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-6 shadow-xl z-50 w-full max-w-md"
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ type: "spring", duration: 0.3 }}
+              className="fixed inset-x-0 top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 z-[70] mx-auto w-[90%] sm:w-[400px] max-w-lg"
             >
-              <h3 className="text-xl font-bold text-gray-900 mb-4">
-                Delete Product
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Are you sure you want to delete this product? This action cannot
-                be undone.
-              </p>
-              <div className="flex justify-end gap-3">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => setDeleteModalOpen(false)}
-                  className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors"
-                >
-                  Cancel
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={confirmDelete}
-                  className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors"
-                >
-                  Delete
-                </motion.button>
+              <div className="bg-white rounded-xl shadow-xl overflow-hidden">
+                <div className="p-5">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3">
+                    Delete Product
+                  </h3>
+                  <p className="text-sm sm:text-base text-gray-600 mb-5">
+                    Are you sure you want to delete this product? This action cannot be undone.
+                  </p>
+                  <div className="flex flex-col-reverse sm:flex-row justify-end gap-2">
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => setDeleteModalOpen(false)}
+                      className="w-full sm:w-auto px-4 py-2.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors text-sm font-medium"
+                    >
+                      Cancel
+                    </motion.button>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={confirmDelete}
+                      className="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors text-sm font-medium mb-2 sm:mb-0"
+                    >
+                      Delete
+                    </motion.button>
+                  </div>
+                </div>
               </div>
             </motion.div>
           </>
