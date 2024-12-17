@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Loader2, MapPin, Phone, Clock, CheckCircle } from "lucide-react";
+import { Loader2, MapPin, Phone, Clock, CheckCircle, Home } from "lucide-react";
 import { format } from "date-fns";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -224,65 +224,72 @@ export default function CheckoutSuccessPage({
 
             {/* Actions */}
             <div className="flex gap-4">
-            <button
-  onClick={() => {
-    // Create print-only content
-    const printContent = document.createElement('div');
-    printContent.className = 'print-section';
-    printContent.innerHTML = `
-      <div class="print-header">
-        <h1 style="font-size: 24px; font-weight: bold;">WasteLess - Order Receipt</h1>
-        <p>Order #${order.id}</p>
-        <p>${format(new Date(order.created_at), "dd MMM yyyy, HH:mm")}</p>
-      </div>
-      
-      <div style="margin-bottom: 30px;">
-        <h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Items</h2>
-        ${order.items.map(item => `
-          <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
-            <div style="display: flex; justify-content: space-between;">
-              <span>${item.product_name} x ${item.quantity}</span>
-              <span>Rp ${item.price.toLocaleString()}</span>
-            </div>
-            <div style="margin-top: 5px; font-size: 14px; color: #666;">
-              Seller: ${item.seller_name}<br>
-              Pickup: ${item.seller_address}, ${item.seller_kecamatan}, ${item.seller_kabupaten}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-      
-      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #000;">
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-          <span>Subtotal</span>
-          <span>Rp ${(order.total_amount - order.ppn).toLocaleString()}</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-          <span>PPN (0.7%)</span>
-          <span>Rp ${order.ppn.toLocaleString()}</span>
-        </div>
-        <div style="display: flex; justify-content: space-between; font-weight: bold; margin-top: 10px; padding-top: 10px; border-top: 1px solid #000;">
-          <span>Total</span>
-          <span>Rp ${order.total_amount.toLocaleString()}</span>
-        </div>
-      </div>
+              <button
+                onClick={() => router.push("/")}
+                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2"
+              >
+                <Home className="w-4 h-4" />
+                Home
+              </button>
+              <button
+                onClick={() => {
+                  // Create print-only content
+                  const printContent = document.createElement('div');
+                  printContent.className = 'print-section';
+                  printContent.innerHTML = `
+                    <div class="print-header">
+                      <h1 style="font-size: 24px; font-weight: bold;">WasteLess - Order Receipt</h1>
+                      <p>Order #${order.id}</p>
+                      <p>${format(new Date(order.created_at), "dd MMM yyyy, HH:mm")}</p>
+                    </div>
+                    
+                    <div style="margin-bottom: 30px;">
+                      <h2 style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Items</h2>
+                      ${order.items.map(item => `
+                        <div style="padding: 10px 0; border-bottom: 1px solid #eee;">
+                          <div style="display: flex; justify-content: space-between;">
+                            <span>${item.product_name} x ${item.quantity}</span>
+                            <span>Rp ${item.price.toLocaleString()}</span>
+                          </div>
+                          <div style="margin-top: 5px; font-size: 14px; color: #666;">
+                            Seller: ${item.seller_name}<br>
+                            Pickup: ${item.seller_address}, ${item.seller_kecamatan}, ${item.seller_kabupaten}
+                          </div>
+                        </div>
+                      `).join('')}
+                    </div>
+                    
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #000;">
+                      <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>Subtotal</span>
+                        <span>Rp ${(order.total_amount - order.ppn).toLocaleString()}</span>
+                      </div>
+                      <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span>PPN (0.7%)</span>
+                        <span>Rp ${order.ppn.toLocaleString()}</span>
+                      </div>
+                      <div style="display: flex; justify-content: space-between; font-weight: bold; margin-top: 10px; padding-top: 10px; border-top: 1px solid #000;">
+                        <span>Total</span>
+                        <span>Rp ${order.total_amount.toLocaleString()}</span>
+                      </div>
+                    </div>
 
-      <div style="margin-top: 30px; padding: 15px; border: 1px solid #000; font-size: 14px;">
-        <p><strong>Payment Method:</strong> ${order.payment_method === "midtrans" ? "Online Payment" : "Cash on Pickup"}</p>
-        <p><strong>Payment Status:</strong> ${order.payment_status.toUpperCase()}</p>
-        <p><strong>Note:</strong> Please show this receipt when picking up your items.</p>
-      </div>
-    `;
+                    <div style="margin-top: 30px; padding: 15px; border: 1px solid #000; font-size: 14px;">
+                      <p><strong>Payment Method:</strong> ${order.payment_method === "midtrans" ? "Online Payment" : "Cash on Pickup"}</p>
+                      <p><strong>Payment Status:</strong> ${order.payment_status.toUpperCase()}</p>
+                      <p><strong>Note:</strong> Please show this receipt when picking up your items.</p>
+                    </div>
+                  `;
 
-    // Add to document, print, then remove
-    document.body.appendChild(printContent);
-    window.print();
-    document.body.removeChild(printContent);
-  }}
-  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
->
-  Print Receipt
-</button>
+                  // Add to document, print, then remove
+                  document.body.appendChild(printContent);
+                  window.print();
+                  document.body.removeChild(printContent);
+                }}
+                className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
+              >
+                Print Receipt
+              </button>
               <button
                 onClick={() => router.push("/history")}
                 className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
