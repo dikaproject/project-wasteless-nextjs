@@ -60,7 +60,7 @@ const ContactPage = () => {
                 className="bg-white p-8 rounded-2xl shadow-xl"
               >
                 <h2 className="text-3xl font-bold mb-6 text-gray-600">Hubungi Kami</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-6 text-gray-700">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Nama</label>
                     <input
